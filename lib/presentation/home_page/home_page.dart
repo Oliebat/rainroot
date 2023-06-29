@@ -40,11 +40,13 @@ class HomePage extends StatelessWidget {
                                       getHorizontalSize(20)),
                                   alignment: Alignment.center),
                               CustomAppBar(
-                                  height: getVerticalSize(106),
+                                  height: getVerticalSize(150),
                                   centerTitle: true,
                                   title: Row(children: [
                                     CustomImageView(
                                         imagePath: ImageConstant.imgRectangle2,
+                                        margin:
+                                            const EdgeInsets.only(left: 10.0),
                                         height: getSize(106),
                                         width: getSize(106),
                                         radius: BorderRadius.circular(

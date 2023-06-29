@@ -122,6 +122,7 @@ class StarterScreen extends StatelessWidget {
                                     style: AppStyle.txtH2Bluegray700)),
                             Spacer(),
                             CustomButton(
+                                margin: const EdgeInsets.only(bottom: 40.0),
                                 height: getVerticalSize(47),
                                 text: "lbl_explorer".tr,
                                 shape: ButtonShape.RoundedBorder23,
