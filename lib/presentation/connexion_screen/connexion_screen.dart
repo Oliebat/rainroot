@@ -160,9 +160,23 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                       key: 'auth_token',
                                       value: data['accessToken'],
                                     );
-                                    showSnackbar('Connexion réussie');
-                                    NavigatorService.pushNamed(
-                                        AppRoutes.homeContainerScreen);
+                                    // var userId = data['id'];
+                                    // print('User ID from API: $userId');
+                                    // showSnackbar('Connexion réussie');
+                                    // NavigatorService.pushNamed(
+                                    //   AppRoutes.homeContainerScreen,
+                                    //   arguments: {
+                                    //     userId
+                                    //   }, // Passez l'ID de l'utilisateur en tant qu'argument
+                                    // );
+                                    var userId = data['id'];
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.homePage,
+                                      arguments: {
+                                        'userId': userId,
+                                      },
+                                    );
                                   } else if (data.containsKey('error')) {
                                     // Handle error from API
                                     setState(() {

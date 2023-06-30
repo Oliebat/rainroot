@@ -10,6 +10,7 @@ import 'package:rainroot/presentation/profil_screen/profil_screen.dart';
 import 'package:rainroot/presentation/arroseurs_screen/arroseurs_screen.dart';
 import 'package:rainroot/presentation/mon_arroseur_screen/mon_arroseur_screen.dart';
 import 'package:rainroot/presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:rainroot/presentation/home_page/home_page.dart';
 
 class AppRoutes {
   static const String pageConnexionScreen = '/page_connexion_screen';
@@ -45,7 +46,8 @@ class AppRoutes {
         creationCompteScreen: CreationCompteScreen.builder,
         connexionScreen: ConnexionScreen.builder,
         resetScreen: ResetScreen.builder,
-        homeContainerScreen: HomeContainerScreen.builder,
+        // homeContainerScreen: HomeContainerScreen.builder,
+        homePage: HomePage.builder,
         profilScreen: ProfilScreen.builder,
         arroseursScreen: ArroseursScreen.builder,
         monArroseurScreen: MonArroseurScreen.builder,

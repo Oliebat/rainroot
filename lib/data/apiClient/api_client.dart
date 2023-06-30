@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io'; // Import this for SocketException
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:rainroot/core/constants/utils.dart';
 
@@ -81,6 +81,37 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
   }
 }
 
+Future<User> getUserById(String id) async {
+  String url = Utils.baseUrl + "/users/1";
+  print('URL for request: $url');
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+      },
+    );
 
+    if (response.statusCode == 200) {
+      var convertDataToJson = jsonDecode(response.body);
+      if (convertDataToJson is Map<String, dynamic>) {
+        return User.fromJson(convertDataToJson); // Utiliser la factory pour créer un User
+      } else {
+        throw Exception('Format de réponse invalide du serveur');
+      }
+    } else if (response.statusCode == 404) {
+      // Not Found - User not found
+      var errorJson = jsonDecode(response.body);
+      throw Exception(errorJson['message']);
+    } else {
+      throw Exception('Le serveur a répondu avec le code de statut: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    throw Exception('Connexion refusée');
+  } catch (e) {
+    print('Error occurred: $e');
+    throw Exception('Une erreur inattendue est survenue');
+  }
+}
 
 

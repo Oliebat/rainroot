@@ -28,18 +28,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   List<Widget>? actions;
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: height,
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
-      leadingWidth: leadingWidth ?? 0,
-      leading: leading,
-      title: title,
-      titleSpacing: 0,
-      centerTitle: centerTitle ?? false,
-      actions: actions,
+    return Padding(
+      padding: EdgeInsets.only(
+          top: 10, bottom: 10), // Changer le padding comme vous voulez
+      child: AppBar(
+        elevation: 0,
+        toolbarHeight: height,
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        leadingWidth: leadingWidth ?? 0,
+        leading: leading,
+        title: title,
+        titleSpacing: 0,
+        centerTitle: centerTitle ?? false,
+        actions: actions,
+      ),
     );
   }
 
