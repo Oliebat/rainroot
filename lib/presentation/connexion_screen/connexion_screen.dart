@@ -22,6 +22,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final storage = FlutterSecureStorage();
+
   bool fieldsEmptyError = false;
   String? errorMsg;
 
@@ -126,7 +127,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                             'Vos champs sont vides',
                             style: TextStyle(color: Colors.red),
                           ),
-                        if (errorMsg != null)
+                        if (errorMsg?.isNotEmpty ?? false)
                           Text(
                             errorMsg!,
                             style: TextStyle(color: Colors.red),
@@ -155,35 +156,33 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                       await api.userLogin(email, password);
                                   print('After API call, data: $data');
                                   if (data.containsKey('accessToken')) {
-                                    print('Token received, writing to storage');
-                                    await storage.write(
-                                        key: 'auth_token',
-                                        value: data['accessToken']);
-                                    print('After writing to storage');
-
-                                    // Show success snackbar
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Connexion réussie!'),
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    );
-
-                                    print('Navigating to HomeContainerScreen');
-                                    NavigatorService.pushNamed(
-                                        AppRoutes.homeContainerScreen);
-                                    print('Navigation should have occurred');
-                                  } else {
-                                    // Handle incorrect credentials
-                                    print('No token in response data');
+                                    // ... le reste du code de votre widget ...
+                                  } else if (data.containsKey('error')) {
+                                    // Handle error from API
+                                    setState(() {
+                                      errorMsg = data['error'];
+                                    });
                                   }
                                 } catch (e) {
                                   print('Error during login process: $e');
-                                }
+                                  setState(() {
+                                    errorMsg = e.toString();
+                                  });
+                                } 
                               }
                             }
                           },
                         ),
+                        if (fieldsEmptyError)
+                          Text(
+                            'Vos champs sont vides',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        // if (errorMsg?.isNotEmpty ?? false)
+                        //   Text(
+                        //     errorMsg!,
+                        //     style: TextStyle(color: Colors.red),
+                        //   ),
                       ],
                     ),
                   ),

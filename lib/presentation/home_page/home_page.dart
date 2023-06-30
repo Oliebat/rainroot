@@ -45,7 +45,10 @@ class HomePage extends StatelessWidget {
                                   title: Row(children: [
                                     CustomImageView(
                                         imagePath: ImageConstant.imgRectangle2,
-                                        height: getSize(106),
+                                        // add margin to the image
+                                        margin: getMargin(
+                                            left: 30, top: 0, bottom: 0),
+                                        // add ze(106),
                                         width: getSize(106),
                                         radius: BorderRadius.circular(
                                             getHorizontalSize(50))),

@@ -108,7 +108,7 @@ class PageConnexionScreen extends StatelessWidget {
                                 style: AppStyle.txtH2)),
                         CustomButton(
                             height: getVerticalSize(39),
-                            text: "lbl_s_inscrire".tr,
+                            text: "Inscription".tr,
                             margin: getMargin(left: 29, top: 34, right: 29),
                             onTap: () {
                               onTapSinscrire(context);

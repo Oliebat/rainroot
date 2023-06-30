@@ -186,6 +186,9 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                                     NavigatorService.pushNamed(
                                       AppRoutes.homeContainerScreen,
                                     );
+                                  } else if (data.containsKey('error')) {
+                                    showSnackbar(data[
+                                        'error']); // Show the error message from the server
                                   } else {
                                     showSnackbar(
                                         'Erreur lors de la création du compte');

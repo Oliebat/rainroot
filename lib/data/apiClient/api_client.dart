@@ -18,23 +18,17 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
 
     if (response.statusCode == 200) {
       var convertDataToJson = jsonDecode(response.body);
-
       if (convertDataToJson is Map<String, dynamic>) {
         return convertDataToJson;
       } else {
-        throw Exception('Invalid format received from the server');
+        return {'error': 'Format de réponse invalide du serveur'};
       }
-    } else if (response.statusCode == 400) {
-      // Bad Request - Invalid credentials
+    } else if (response.statusCode == 400 || response.statusCode == 404) {
+      // Bad Request or Not Found - User not found or Invalid credentials
       var errorJson = jsonDecode(response.body);
-      var errorMessage = errorJson['message'];
-      throw Exception(errorMessage);
-    } else if (response.statusCode == 404) {
-      // Not Found - User not found
-      throw Exception('Utilisateur introuvable');
+      return {'error': errorJson['message']};
     } else {
-      throw Exception(
-          'Server responded with status code: ${response.statusCode}');
+      return {'error': 'Le serveur a répondu avec le code de statut: ${response.statusCode}'};
     }
   } on SocketException catch (_) {
     return {'error': 'Connexion refusée'};
@@ -43,6 +37,8 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
     return {'error': 'Une erreur inattendue est survenue'};
   }
 }
+
+
 
 Future<Map<String, dynamic>> createUser(String firstName, String lastName, String email, String password) async {
   String url = Utils.baseUrl + "/auth/signup";
@@ -65,20 +61,17 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
 
     if (response.statusCode == 201) {
       var convertDataToJson = jsonDecode(response.body);
-
       if (convertDataToJson is Map<String, dynamic>) {
         return convertDataToJson;
       } else {
-        throw Exception('Invalid format received from the server');
+        return {'error': 'Format de réponse invalide du serveur'};
       }
     } else if (response.statusCode == 400) {
       // Bad Request - Invalid data
       var errorJson = jsonDecode(response.body);
-      var errorMessage = errorJson['message'];
-      throw Exception(errorMessage);
+      return {'error': errorJson['message']};
     } else {
-      throw Exception(
-          'Server responded with status code: ${response.statusCode}');
+      return {'error': 'Le serveur a répondu avec le code de statut: ${response.statusCode}'};
     }
   } on SocketException catch (_) {
     return {'error': 'Connexion refusée'};
@@ -87,6 +80,7 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
     return {'error': 'Une erreur inattendue est survenue'};
   }
 }
+
 
 
 
