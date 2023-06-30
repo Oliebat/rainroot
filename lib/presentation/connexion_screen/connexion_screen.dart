@@ -160,6 +160,15 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                         key: 'auth_token',
                                         value: data['accessToken']);
                                     print('After writing to storage');
+
+                                    // Show success snackbar
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Connexion réussie!'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+
                                     print('Navigating to HomeContainerScreen');
                                     NavigatorService.pushNamed(
                                         AppRoutes.homeContainerScreen);

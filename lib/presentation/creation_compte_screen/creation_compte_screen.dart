@@ -174,6 +174,8 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                                     password,
                                   );
 
+                                  print('Data from createUser: $data');
+
                                   if (data.containsKey('accessToken')) {
                                     await storage.write(
                                       key: 'auth_token',
