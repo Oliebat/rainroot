@@ -1,80 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:rainroot/core/app_export.dart';
 
 class CustomTextFormField extends StatelessWidget {
-  CustomTextFormField(
-      {this.shape,
-      this.padding,
-      this.variant,
-      this.fontStyle,
-      this.alignment,
-      this.width,
-      this.margin,
-      this.controller,
-      this.focusNode,
-      this.autofocus = false,
-      this.isObscureText = false,
-      this.textInputAction = TextInputAction.next,
-      this.textInputType = TextInputType.text,
-      this.maxLines,
-      this.hintText,
-      this.prefix,
-      this.prefixConstraints,
-      this.suffix,
-      this.suffixConstraints,
-      this.validator});
+  final TextFormFieldShape? shape;
+  final TextFormFieldPadding? padding;
+  final TextFormFieldVariant? variant;
+  final TextFormFieldFontStyle? fontStyle;
+  final Alignment? alignment;
+  final double? width;
+  final EdgeInsetsGeometry? margin;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final bool? autofocus;
+  final bool? isObscureText;
+  final TextInputAction? textInputAction;
+  final TextInputType? textInputType;
+  final int? maxLines;
+  final String? hintText;
+  final Widget? prefix;
+  final BoxConstraints? prefixConstraints;
+  final Widget? suffix;
+  final BoxConstraints? suffixConstraints;
+  final FormFieldValidator<String>? validator;
 
-  TextFormFieldShape? shape;
-
-  TextFormFieldPadding? padding;
-
-  TextFormFieldVariant? variant;
-
-  TextFormFieldFontStyle? fontStyle;
-
-  Alignment? alignment;
-
-  double? width;
-
-  EdgeInsetsGeometry? margin;
-
-  TextEditingController? controller;
-
-  FocusNode? focusNode;
-
-  bool? autofocus;
-
-  bool? isObscureText;
-
-  TextInputAction? textInputAction;
-
-  TextInputType? textInputType;
-
-  int? maxLines;
-
-  String? hintText;
-
-  Widget? prefix;
-
-  BoxConstraints? prefixConstraints;
-
-  Widget? suffix;
-
-  BoxConstraints? suffixConstraints;
-
-  FormFieldValidator<String>? validator;
+  CustomTextFormField({
+    this.shape,
+    this.padding,
+    this.variant,
+    this.fontStyle,
+    this.alignment,
+    this.width,
+    this.margin,
+    this.controller,
+    this.focusNode,
+    this.autofocus = false,
+    this.isObscureText = false,
+    this.textInputAction = TextInputAction.next,
+    this.textInputType = TextInputType.text,
+    this.maxLines,
+    this.hintText,
+    this.prefix,
+    this.prefixConstraints,
+    this.suffix,
+    this.suffixConstraints,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
     return alignment != null
         ? Align(
-            alignment: alignment ?? Alignment.center,
+            alignment: alignment!,
             child: _buildTextFormFieldWidget(),
           )
         : _buildTextFormFieldWidget();
   }
 
-  _buildTextFormFieldWidget() {
+  Widget _buildTextFormFieldWidget() {
     return Container(
       width: width ?? double.maxFinite,
       margin: margin,
@@ -84,7 +65,7 @@ class CustomTextFormField extends StatelessWidget {
         autofocus: autofocus!,
         style: _setFontStyle(),
         obscureText: isObscureText!,
-        textInputAction: textInputAction,
+        textInputAction: textInputAction!,
         keyboardType: textInputType,
         maxLines: maxLines ?? 1,
         decoration: _buildDecoration(),
@@ -93,7 +74,7 @@ class CustomTextFormField extends StatelessWidget {
     );
   }
 
-  _buildDecoration() {
+  InputDecoration _buildDecoration() {
     return InputDecoration(
       hintText: hintText ?? "",
       hintStyle: _setFontStyle(),
@@ -112,54 +93,65 @@ class CustomTextFormField extends StatelessWidget {
     );
   }
 
-  _setFontStyle() {
+  TextStyle _setFontStyle() {
     switch (fontStyle) {
+      case TextFormFieldFontStyle.WorkSansRomanRegular12:
+        return TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+          fontFamily: 'Work Sans',
+          fontWeight: FontWeight.w400,
+        );
       default:
         return TextStyle(
-          color: ColorConstant.black900,
-          fontSize: getFontSize(
-            12,
-          ),
+          color: Colors.black,
+          fontSize: 12,
           fontFamily: 'Work Sans',
           fontWeight: FontWeight.w400,
         );
     }
   }
 
-  _setOutlineBorderRadius() {
+  BorderRadius _setOutlineBorderRadius() {
     switch (shape) {
+      case TextFormFieldShape.CircleBorder17:
+        return BorderRadius.circular(17.0);
       default:
-        return BorderRadius.circular(
-          getHorizontalSize(
-            17.00,
-          ),
-        );
+        return BorderRadius.circular(17.0);
     }
   }
 
-  _setBorderStyle() {
+  InputBorder _setBorderStyle() {
     switch (variant) {
       case TextFormFieldVariant.None:
         return InputBorder.none;
+      case TextFormFieldVariant.OutlineBluegray700:
+        return OutlineInputBorder(
+          borderRadius: _setOutlineBorderRadius(),
+          borderSide: BorderSide(
+            color: Colors.blueGrey[700]!,
+            width: 1,
+          ),
+        );
       default:
         return OutlineInputBorder(
           borderRadius: _setOutlineBorderRadius(),
           borderSide: BorderSide(
-            color: ColorConstant.blueGray700,
+            color: Colors.blueGrey[700]!,
             width: 1,
           ),
         );
     }
   }
 
-  _setFillColor() {
+  Color _setFillColor() {
     switch (variant) {
       default:
-        return ColorConstant.whiteA700;
+        return Colors.white;
     }
   }
 
-  _setFilled() {
+  bool _setFilled() {
     switch (variant) {
       case TextFormFieldVariant.None:
         return false;
@@ -168,14 +160,12 @@ class CustomTextFormField extends StatelessWidget {
     }
   }
 
-  _setPadding() {
+  EdgeInsets _setPadding() {
     switch (padding) {
+      case TextFormFieldPadding.PaddingT9:
+        return EdgeInsets.only(left: 9, top: 9, bottom: 9);
       default:
-        return getPadding(
-          left: 9,
-          top: 9,
-          bottom: 9,
-        );
+        return EdgeInsets.only(left: 9, top: 9, bottom: 9);
     }
   }
 }

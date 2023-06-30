@@ -46,6 +46,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 70,
       decoration: BoxDecoration(
         color: ColorConstant.whiteA700,
         boxShadow: [
@@ -119,6 +120,7 @@ class BottomMenuModel {
   String icon;
   BottomBarEnum type;
 }
+
 class DefaultWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

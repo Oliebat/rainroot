@@ -101,7 +101,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                         SizedBox(height: getVerticalSize(70)),
                         CustomTextFormField(
                           controller: _emailController,
-                          hintText: "email".tr,
+                          hintText: "Email".tr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre adresse e-mail';
@@ -112,7 +112,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                         SizedBox(height: getVerticalSize(40)),
                         CustomTextFormField(
                           controller: _passwordController,
-                          hintText: "mot_de_passe".tr,
+                          hintText: "Mot de passe".tr,
                           isObscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -156,7 +156,13 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                       await api.userLogin(email, password);
                                   print('After API call, data: $data');
                                   if (data.containsKey('accessToken')) {
-                                    // ... le reste du code de votre widget ...
+                                    await storage.write(
+                                      key: 'auth_token',
+                                      value: data['accessToken'],
+                                    );
+                                    showSnackbar('Connexion réussie');
+                                    NavigatorService.pushNamed(
+                                        AppRoutes.homeContainerScreen);
                                   } else if (data.containsKey('error')) {
                                     // Handle error from API
                                     setState(() {
@@ -168,11 +174,12 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                   setState(() {
                                     errorMsg = e.toString();
                                   });
-                                } 
+                                }
                               }
                             }
                           },
                         ),
+
                         if (fieldsEmptyError)
                           Text(
                             'Vos champs sont vides',
@@ -191,6 +198,16 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        backgroundColor: Color.fromARGB(255, 53, 220, 69),
       ),
     );
   }

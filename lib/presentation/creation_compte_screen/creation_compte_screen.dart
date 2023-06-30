@@ -99,10 +99,10 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                           textAlign: TextAlign.left,
                           style: AppStyle.txtH1,
                         ),
-                        SizedBox(height: getVerticalSize(70)),
+                        SizedBox(height: getVerticalSize(40)),
                         CustomTextFormField(
                           controller: _firstNameController,
-                          hintText: "nom".tr,
+                          hintText: "Prénom".tr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre prénom';
@@ -113,7 +113,7 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                         SizedBox(height: getVerticalSize(40)),
                         CustomTextFormField(
                           controller: _nameController,
-                          hintText: "nom".tr,
+                          hintText: "Nom".tr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre nom';
@@ -124,7 +124,7 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                         SizedBox(height: getVerticalSize(40)),
                         CustomTextFormField(
                           controller: _emailController,
-                          hintText: "email".tr,
+                          hintText: "Email".tr,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre adresse e-mail';
@@ -135,7 +135,7 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                         SizedBox(height: getVerticalSize(40)),
                         CustomTextFormField(
                           controller: _passwordController,
-                          hintText: "mot_de_passe".tr,
+                          hintText: "Mot de passe".tr,
                           isObscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
