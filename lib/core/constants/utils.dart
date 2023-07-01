@@ -42,6 +42,12 @@ class User {
       picture: json['picture'],
     );
   }
+
+  // Override toString
+  @override
+  String toString() {
+    return 'User{id: $id, firstName: $firstName, lastName: $lastName, email: $email, picture: $picture}';
+  }
 }
 
 class UserManager {
@@ -54,5 +60,59 @@ class UserManager {
 
   Future<String?> getUserId() async {
     return await _storage.read(key: _userKey);
+  }
+}
+
+
+class Sprinkler {
+  final int sprinklerId;
+  final int userId;
+  final String uniqueCode;
+  final String sprinklerName;
+  final String location;
+  final double waterLevel;
+  final double soilMoistureLevel;
+  final double temperature;
+  final bool irrigationStatus;
+  final dynamic lastIrrigationTime;
+  final dynamic scheduledIrrigationTime;
+  final bool automaticIrrigation;
+  final String createdAt;
+  final String updatedAt;
+
+  Sprinkler({
+    required this.sprinklerId,
+    required this.userId,
+    required this.uniqueCode,
+    required this.sprinklerName,
+    required this.location,
+    required this.waterLevel,
+    required this.soilMoistureLevel,
+    required this.temperature,
+    required this.irrigationStatus,
+    this.lastIrrigationTime,
+    this.scheduledIrrigationTime,
+    required this.automaticIrrigation,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Sprinkler.fromJson(Map<String, dynamic> json) {
+    return Sprinkler(
+      sprinklerId: json['sprinkler_id'],
+      userId: json['userId'],
+      uniqueCode: json['uniqueCode'],
+      sprinklerName: json['sprinkler_name'],
+      location: json['location'],
+      waterLevel: json['water_level'].toDouble(),
+      soilMoistureLevel: json['soil_moisture_level'].toDouble(),
+      temperature: json['temperature'].toDouble(),
+      irrigationStatus: json['irrigation_status'],
+      lastIrrigationTime: json['last_irrigation_time'],
+      scheduledIrrigationTime: json['scheduledIrrigationTime'],
+      automaticIrrigation: json['automaticIrrigation'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
   }
 }

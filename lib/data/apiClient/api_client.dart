@@ -28,7 +28,10 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
       var errorJson = jsonDecode(response.body);
       return {'error': errorJson['message']};
     } else {
-      return {'error': 'Le serveur a répondu avec le code de statut: ${response.statusCode}'};
+      return {
+        'error':
+            'Le serveur a répondu avec le code de statut: ${response.statusCode}'
+      };
     }
   } on SocketException catch (_) {
     return {'error': 'Connexion refusée'};
@@ -38,9 +41,8 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
   }
 }
 
-
-
-Future<Map<String, dynamic>> createUser(String firstName, String lastName, String email, String password) async {
+Future<Map<String, dynamic>> createUser(
+    String firstName, String lastName, String email, String password) async {
   String url = Utils.baseUrl + "/auth/signup";
   print('URL for request: $url');
   try {
@@ -71,7 +73,10 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
       var errorJson = jsonDecode(response.body);
       return {'error': errorJson['message']};
     } else {
-      return {'error': 'Le serveur a répondu avec le code de statut: ${response.statusCode}'};
+      return {
+        'error':
+            'Le serveur a répondu avec le code de statut: ${response.statusCode}'
+      };
     }
   } on SocketException catch (_) {
     return {'error': 'Connexion refusée'};
@@ -83,35 +88,110 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
 
 Future<User> getUserById(String id) async {
   String url = Utils.baseUrl + "/users/$id";
+
+  // Create storage
+  final storage = new FlutterSecureStorage();
+
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+  // verify if token is stored with flutter_secure_storage
+  print('Stored token: $token');
+
+  if (token == null) {
+    print('Error occurred: Token is null');
+    throw Exception('Token is null');
+  }
+
   print('URL for request: $url');
   try {
     final response = await http.get(
       Uri.parse(url),
       headers: {
         "Accept": "application/json",
+        "x-access-token": "$token",
       },
     );
+      print('Headers: ${response.headers}');
 
     if (response.statusCode == 200) {
       var convertDataToJson = jsonDecode(response.body);
       if (convertDataToJson is Map<String, dynamic>) {
-        return User.fromJson(convertDataToJson); // Utiliser la factory pour créer un User
+        return User.fromJson(convertDataToJson);
       } else {
-        throw Exception('Format de réponse invalide du serveur');
+        throw Exception('Invalid server response format');
       }
+    } else if (response.statusCode == 403) {
+      // Forbidden - Access token may be invalid or expired
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
     } else if (response.statusCode == 404) {
       // Not Found - User not found
       var errorJson = jsonDecode(response.body);
-      throw Exception(errorJson['message']);
+      throw Exception('User not found: ${errorJson['message']}');
     } else {
-      throw Exception('Le serveur a répondu avec le code de statut: ${response.statusCode}');
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
     }
   } on SocketException catch (_) {
-    throw Exception('Connexion refusée');
+    print('Error occurred: Connection refused');
+    throw Exception('Connection refused');
   } catch (e) {
     print('Error occurred: $e');
-    throw Exception('Une erreur inattendue est survenue');
+    throw Exception('An unexpected error occurred');
   }
 }
 
+Future<List<Sprinkler>> getMySprinklers() async {
+  String url = Utils.baseUrl + "/my-sprinklers";
 
+  // Create storage
+  final storage = new FlutterSecureStorage();
+
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+  // verify if token is stored with flutter_secure_storage
+  print('Stored token: $token');
+
+  if (token == null) {
+    print('Error occurred: Token is null');
+    throw Exception('Token is null');
+  }
+
+  print('URL for request: $url');
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+        "x-access-token": "$token",
+      },
+    );
+    print('Headers: ${response.headers}');
+
+    if (response.statusCode == 200) {
+      var convertDataToJson = jsonDecode(response.body);
+      if (convertDataToJson is List) {
+        return convertDataToJson.map((json) => Sprinkler.fromJson(json)).toList();
+      } else {
+        throw Exception('Invalid server response format');
+      }
+    } else if (response.statusCode == 403) {
+      // Forbidden - Access token may be invalid or expired
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
+    } else if (response.statusCode == 404) {
+      // Not Found - User not found
+      var errorJson = jsonDecode(response.body);
+      throw Exception('User not found: ${errorJson['message']}');
+    } else {
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    print('Error occurred: Connection refused');
+    throw Exception('Connection refused');
+  } catch (e) {
+    print('Error occurred: $e');
+    throw Exception('An unexpected error occurred');
+  }
+}
