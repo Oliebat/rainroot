@@ -47,6 +47,7 @@ class AppRoutes {
         connexionScreen: ConnexionScreen.builder,
         resetScreen: ResetScreen.builder,
         // homeContainerScreen: HomeContainerScreen.builder,
+        // passe le userId en parametre pour la home page
         homePage: HomePage.builder,
         profilScreen: ProfilScreen.builder,
         arroseursScreen: ArroseursScreen.builder,

@@ -1,9 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Utils {
-  static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
-  // static String baseUrl = 'http://172.16.0.152:8080/api'; // NFS
-
+  // static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
+  static String baseUrl = 'http://172.16.0.45:8080/api'; // NFS
 }
 
 class TokenUtils {
@@ -17,7 +16,6 @@ class TokenUtils {
     return prefs.getString('token');
   }
 }
-
 
 class User {
   final int? id;
@@ -44,4 +42,3 @@ class User {
     );
   }
 }
-

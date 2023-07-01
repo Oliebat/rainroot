@@ -82,7 +82,7 @@ Future<Map<String, dynamic>> createUser(String firstName, String lastName, Strin
 }
 
 Future<User> getUserById(String id) async {
-  String url = Utils.baseUrl + "/users/1";
+  String url = Utils.baseUrl + "/users/$id";
   print('URL for request: $url');
   try {
     final response = await http.get(
