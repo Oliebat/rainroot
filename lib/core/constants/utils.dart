@@ -1,8 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Utils {
-  // static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
-  static String baseUrl = 'http://172.16.0.45:8080/api'; // NFS
+  static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
+  // static String baseUrl = 'http://172.16.0.45:8080/api'; // NFS
 }
 
 class TokenUtils {
@@ -40,5 +41,18 @@ class User {
       email: json['email'],
       picture: json['picture'],
     );
+  }
+}
+
+class UserManager {
+  final _storage = FlutterSecureStorage();
+  static const _userKey = 'UserId';
+
+  Future<void> setUserId(String id) async {
+    await _storage.write(key: _userKey, value: id);
+  }
+
+  Future<String?> getUserId() async {
+    return await _storage.read(key: _userKey);
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rainroot/core/app_export.dart';
 import 'package:rainroot/core/constants/utils.dart';
 import 'package:rainroot/data/apiClient/api_client.dart' as api;
-import 'package:rainroot/presentation/home_page/home_page.dart';
 import 'package:rainroot/widgets/custom_button.dart';
 import 'package:rainroot/widgets/custom_icon_button.dart';
 import 'package:rainroot/widgets/custom_text_form_field.dart';
@@ -161,28 +160,12 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                       key: 'auth_token',
                                       value: data['accessToken'],
                                     );
-                                    // var userId = data['id'];
-                                    // print('User ID from API: $userId');
-                                    // showSnackbar('Connexion réussie');
-                                    // NavigatorService.pushNamed(
-                                    //   AppRoutes.homeContainerScreen,
-                                    //   arguments: {
-                                    //     userId
-                                    //   }, // Passez l'ID de l'utilisateur en tant qu'argument
-                                    // );
-                                    var userId = data['id'].toString();
-                                  
-                                     Navigator.pushNamed(
-                                       context,
-                                       AppRoutes.homePage,
-                                       arguments: User(
-                                         id: data['id'],
-                                         firstName: data['firstName'],
-                                         lastName: data['lastName'],
-                                         email: data['email'],
-                                         picture: data['picture'],
-                                       ),
-                                     );
+                                    var userId = data['id'];
+                                    print('User ID from API: $userId');
+                                    showSnackbar('Connexion réussie');
+                                    NavigatorService.pushNamed(
+                                      AppRoutes.homePage,
+                                    );
                                   } else if (data.containsKey('error')) {
                                     // Handle error from API
                                     setState(() {
