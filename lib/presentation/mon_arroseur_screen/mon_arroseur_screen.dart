@@ -164,66 +164,100 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: getMargin(left: 51, top: 30, right: 50),
-                      padding: getPadding(all: 8),
-                      decoration: AppDecoration.outlineBluegray700.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder6,
-                      ),
+                    Padding(
+                      padding: getPadding(left: 54, right: 53),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: getPadding(top: 12, bottom: 10),
+                            padding: getPadding(top: 5, bottom: 5),
                             child: Text(
-                              "msg_programme_d_arrosage".tr,
+                              "Arosage automatique".tr,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
                               style: AppStyle.txtParagraphe,
                             ),
                           ),
-                          CustomIconButton(
-                            height: 38,
-                            width: 38,
-                            variant: IconButtonVariant.OutlineBlack90033_2,
-                            padding: IconButtonPadding.PaddingAll3,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgUserWhiteA700,
-                            ),
+                          Switch(
+                            value: light0,
+                            onChanged: (bool value) async {
+                              // note the async keyword here
+                              setState(() {
+                                light0 = value;
+                              });
+
+                              try {
+                                await api.toggleIrrigation(
+                                    sprinklers[0].sprinklerId);
+                                print('Irrigation toggled successfully.');
+                              } catch (e) {
+                                print('Failed to toggle irrigation: $e');
+                              }
+                            },
                           ),
                         ],
                       ),
                     ),
-                    Container(
-                      margin: getMargin(left: 51, top: 30, right: 50),
-                      padding: getPadding(all: 8),
-                      decoration: AppDecoration.outlineBluegray700.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder6,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: getPadding(top: 12, bottom: 10),
-                            child: Text(
-                              "msg_heure_d_arrosage".tr,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.left,
-                              style: AppStyle.txtParagraphe,
-                            ),
-                          ),
-                          CustomIconButton(
-                            height: 38,
-                            width: 38,
-                            variant: IconButtonVariant.OutlineBlack90033_2,
-                            padding: IconButtonPadding.PaddingAll3,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgClockWhiteA700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   margin: getMargin(left: 51, top: 30, right: 50),
+                    //   padding: getPadding(all: 8),
+                    //   decoration: AppDecoration.outlineBluegray700.copyWith(
+                    //     borderRadius: BorderRadiusStyle.roundedBorder6,
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Padding(
+                    //         padding: getPadding(top: 12, bottom: 10),
+                    //         child: Text(
+                    //           "msg_programme_d_arrosage".tr,
+                    //           overflow: TextOverflow.ellipsis,
+                    //           textAlign: TextAlign.left,
+                    //           style: AppStyle.txtParagraphe,
+                    //         ),
+                    //       ),
+                    //       CustomIconButton(
+                    //         height: 38,
+                    //         width: 38,
+                    //         variant: IconButtonVariant.OutlineBlack90033_2,
+                    //         padding: IconButtonPadding.PaddingAll3,
+                    //         child: CustomImageView(
+                    //           svgPath: ImageConstant.imgUserWhiteA700,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   margin: getMargin(left: 51, top: 30, right: 50),
+                    //   padding: getPadding(all: 8),
+                    //   decoration: AppDecoration.outlineBluegray700.copyWith(
+                    //     borderRadius: BorderRadiusStyle.roundedBorder6,
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Padding(
+                    //         padding: getPadding(top: 12, bottom: 10),
+                    //         child: Text(
+                    //           "msg_heure_d_arrosage".tr,
+                    //           overflow: TextOverflow.ellipsis,
+                    //           textAlign: TextAlign.left,
+                    //           style: AppStyle.txtParagraphe,
+                    //         ),
+                    //       ),
+                    //       CustomIconButton(
+                    //         height: 38,
+                    //         width: 38,
+                    //         variant: IconButtonVariant.OutlineBlack90033_2,
+                    //         padding: IconButtonPadding.PaddingAll3,
+                    //         child: CustomImageView(
+                    //           svgPath: ImageConstant.imgClockWhiteA700,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     Padding(
                       padding: getPadding(left: 51, top: 39, right: 50),
                       child: Row(
@@ -394,8 +428,7 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
               ),
               bottomNavigationBar: CustomBottomBar(
                 onChanged: (BottomBarEnum type) {
-                  Navigator.pushNamed(
-                    navigatorKey.currentContext!,
+                  Navigator.of(context).pushNamed(
                     getCurrentRoute(type),
                   );
                 },
@@ -411,8 +444,12 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
 ///Handling route based on bottom click actions
 String getCurrentRoute(BottomBarEnum type) {
   switch (type) {
-    case BottomBarEnum.Iconeswhitea70048x48:
+    case BottomBarEnum.Home:
       return AppRoutes.homePage;
+    case BottomBarEnum.Profil:
+      return AppRoutes.profilScreen;
+    case BottomBarEnum.Arrosoir:
+      return AppRoutes.arroseursScreen;
     default:
       return "/";
   }
@@ -448,6 +485,6 @@ onTapBtnArrowleft(BuildContext context) {
 /// to push the named route for the homeContainerScreen.
 onTapConfirmerles(BuildContext context) {
   NavigatorService.pushNamed(
-    AppRoutes.homeContainerScreen,
+    AppRoutes.homePage,
   );
 }

@@ -13,29 +13,36 @@ class CustomBottomBar extends StatefulWidget {
 
 class CustomBottomBarState extends State<CustomBottomBar> {
   int selectedIndex = 0;
+  late int logoutIndex;
 
   List<BottomMenuModel> bottomMenuList = [
     BottomMenuModel(
-      icon: ImageConstant.imgIconesWhiteA70048x48,
-      type: BottomBarEnum.Iconeswhitea70048x48,
+      icon: Icons.home,
+      type: BottomBarEnum.Home,
     ),
     BottomMenuModel(
-      icon: ImageConstant.imgIconesWhiteA70048x48,
-      type: BottomBarEnum.Iconeswhitea70048x48,
+      icon: Icons.person,
+      type: BottomBarEnum.Profil,
     ),
     BottomMenuModel(
-      icon: ImageConstant.imgIconesWhiteA70048x48,
-      type: BottomBarEnum.Iconeswhitea70048x48,
+      icon: Icons.shower,
+      type: BottomBarEnum.Arrosoir,
     ),
     BottomMenuModel(
-      icon: ImageConstant.imgIconesWhiteA70048x48,
+      icon: Icons.logout,
       type: BottomBarEnum.Logout,
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    logoutIndex =
+        bottomMenuList.indexWhere((item) => item.type == BottomBarEnum.Logout);
+  }
+
   void logout() {
-    TokenUtils.setToken(
-        ''); // Supprimer le token en le définissant comme une chaîne vide
+    TokenUtils.setToken('');
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppRoutes.connexionScreen,
@@ -66,39 +73,26 @@ class CustomBottomBarState extends State<CustomBottomBar> {
         currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
         items: List.generate(bottomMenuList.length, (index) {
-          if (bottomMenuList[index].type == BottomBarEnum.Logout) {
-            return BottomNavigationBarItem(
-              icon: IconButton(
-                icon: Icon(Icons.logout),
-                onPressed: logout,
-              ),
-              label: '',
-            );
-          } else {
-            return BottomNavigationBarItem(
-              icon: CustomImageView(
-                svgPath: bottomMenuList[index].icon,
-                height: getSize(48),
-                width: getSize(48),
-                color: ColorConstant.whiteA700,
-                radius: BorderRadius.circular(getHorizontalSize(6)),
-              ),
-              activeIcon: CustomImageView(
-                svgPath: bottomMenuList[index].icon,
-                height: getSize(48),
-                width: getSize(48),
-                color: ColorConstant.whiteA700,
-                radius: BorderRadius.circular(getHorizontalSize(6)),
-              ),
-              label: '',
-            );
-          }
+          return BottomNavigationBarItem(
+            icon: Icon(bottomMenuList[index].icon),
+            label: '',
+          );
         }),
         onTap: (index) {
-          if (bottomMenuList[index].type != BottomBarEnum.Logout) {
+          if (index == logoutIndex) {
+            logout();
+          } else {
             selectedIndex = index;
             widget.onChanged?.call(bottomMenuList[index].type);
-            setState(() {});
+            setState(() {
+              if (bottomMenuList[index].type == BottomBarEnum.Home) {
+                Navigator.pushNamed(context, AppRoutes.homePage);
+              } else if (bottomMenuList[index].type == BottomBarEnum.Profil) {
+                Navigator.pushNamed(context, AppRoutes.profilScreen);
+              } else if (bottomMenuList[index].type == BottomBarEnum.Arrosoir) {
+                Navigator.pushNamed(context, AppRoutes.arroseursScreen);
+              }
+            });
           }
         },
       ),
@@ -107,7 +101,9 @@ class CustomBottomBarState extends State<CustomBottomBar> {
 }
 
 enum BottomBarEnum {
-  Iconeswhitea70048x48,
+  Home,
+  Profil,
+  Arrosoir,
   Logout,
 }
 
@@ -117,7 +113,7 @@ class BottomMenuModel {
     required this.type,
   });
 
-  String icon;
+  IconData icon;
   BottomBarEnum type;
 }
 

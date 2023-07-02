@@ -8,7 +8,6 @@ import 'package:rainroot/core/constants/utils.dart';
 import 'package:rainroot/data/apiClient/api_client.dart' as api;
 import 'dart:async';
 
-
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
   static WidgetBuilder get builder => (BuildContext context) => HomePage();
@@ -739,8 +738,7 @@ class _HomePageState extends State<HomePage> {
               ),
               bottomNavigationBar: CustomBottomBar(
                 onChanged: (BottomBarEnum type) {
-                  Navigator.pushNamed(
-                    navigatorKey.currentContext!,
+                  Navigator.of(context).pushNamed(
                     getCurrentRoute(type),
                   );
                 },
@@ -755,8 +753,12 @@ class _HomePageState extends State<HomePage> {
 
 String getCurrentRoute(BottomBarEnum type) {
   switch (type) {
-    case BottomBarEnum.Iconeswhitea70048x48:
+    case BottomBarEnum.Home:
       return AppRoutes.homePage;
+    case BottomBarEnum.Profil:
+      return AppRoutes.profilScreen;
+    case BottomBarEnum.Arrosoir:
+      return AppRoutes.arroseursScreen;
     default:
       return "/";
   }
