@@ -155,7 +155,10 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                               try {
                                 await api.toggleIrrigation(
                                     sprinklers[0].sprinklerId);
-                                print('Irrigation toggled successfully.');
+                                print('Arroseur activé.');
+                                if (!value) {
+                                  print('Arroseur désactivé.');
+                                }
                               } catch (e) {
                                 print('Failed to toggle irrigation: $e');
                               }
@@ -189,7 +192,10 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                               try {
                                 await api.toggleIrrigation(
                                     sprinklers[0].sprinklerId);
-                                print('Irrigation toggled successfully.');
+                                print('Arroseur activé.');
+                                if (!value) {
+                                  print('Arroseur désactivé.');
+                                }
                               } catch (e) {
                                 print('Failed to toggle irrigation: $e');
                               }
