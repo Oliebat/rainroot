@@ -106,7 +106,7 @@ class Sprinkler {
       waterLevel: json['water_level'].toDouble(),
       soilMoistureLevel: json['soil_moisture_level'].toDouble(),
       temperature: json['temperature'].toDouble(),
-      irrigationStatus: json['irrigation_status'],
+      irrigationStatus: json['isIrrigationOn'] as bool,
       lastIrrigationTime: json['last_irrigation_time'],
       scheduledIrrigationTime: json['scheduledIrrigationTime'],
       automaticIrrigation: json['automaticIrrigation'],
@@ -114,6 +114,7 @@ class Sprinkler {
       updatedAt: json['updatedAt'],
     );
   }
+
   @override
   String toString() {
     return 'Sprinkler { sprinklerId: $sprinklerId, userId: $userId, uniqueCode: $uniqueCode, sprinklerName: $sprinklerName, location: $location, waterLevel: $waterLevel, soilMoistureLevel: $soilMoistureLevel, temperature: $temperature, irrigationStatus: $irrigationStatus, lastIrrigationTime: $lastIrrigationTime, scheduledIrrigationTime: $scheduledIrrigationTime, automaticIrrigation: $automaticIrrigation, createdAt: $createdAt, updatedAt: $updatedAt }';

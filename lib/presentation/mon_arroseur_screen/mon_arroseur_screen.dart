@@ -22,28 +22,30 @@ class MonArroseurScreen extends StatefulWidget {
 
 class _MonArroseurScreenState extends State<MonArroseurScreen> {
   Future<List<Sprinkler>>? _sprinklerFuture;
+  bool light0 =
+      false; // Déclaration de la variable light0, assurez-vous de l'initialiser selon votre besoin
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _getMySprinklers();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _getMySprinklers();
+  }
 
-  // void _getMySprinklers() async {
-  //   // Get sprinklers data from API
-  //   setState(() {
-  //     _sprinklerFuture = api.getMySprinklers();
-  //   });
-  //   _sprinklerFuture!.then((sprinklers) {
-  //     print(
-  //         'Sprinklers at homepage: $sprinklers'); // Print the sprinkler objects
-  //   }).catchError((error) {
-  //     // If an error occurred while getting sprinklers data, show an error
-  //     setState(() {
-  //       _sprinklerFuture = Future.error('Failed to load sprinklers');
-  //     });
-  //   });
-  // }
+  void _getMySprinklers() async {
+    // Get sprinklers data from API
+    setState(() {
+      _sprinklerFuture = api.getMySprinklers();
+    });
+    _sprinklerFuture!.then((sprinklers) {
+      print(
+          'Sprinklers at mon arroseur: $sprinklers'); // Print the sprinkler objects
+    }).catchError((error) {
+      // If an error occurred while getting sprinklers data, show an error
+      setState(() {
+        _sprinklerFuture = Future.error('Failed to load sprinklers');
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,24 +66,24 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
         } else {
           // The future has been completed, use the sprinkler data
           List<Sprinkler> sprinklers = sprinklerSnapshot.data!;
-
           return SafeArea(
             child: Scaffold(
               backgroundColor: ColorConstant.whiteA700,
               body: SizedBox(
-                width: double.maxFinite,
+                width: double.infinity,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
                       height: getVerticalSize(397),
-                      width: double.maxFinite,
+                      width: double.infinity,
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
                           Align(
                             alignment: Alignment.topCenter,
                             child: Container(
+                              width: double.infinity,
                               padding: getPadding(all: 20),
                               decoration: BoxDecoration(
                                 image: DecorationImage(
@@ -142,18 +144,21 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                               style: AppStyle.txtParagraphe,
                             ),
                           ),
-                          BlocSelector<MonArroseurBloc, MonArroseurState,
-                              bool?>(
-                            selector: (state) => state.isSelectedSwitch,
-                            builder: (context, isSelectedSwitch) {
-                              return CustomSwitch(
-                                value: isSelectedSwitch,
-                                onChanged: (value) {
-                                  context
-                                      .read<MonArroseurBloc>()
-                                      .add(ChangeSwitchEvent(value: value));
-                                },
-                              );
+                          Switch(
+                            value: light0,
+                            onChanged: (bool value) async {
+                              // note the async keyword here
+                              setState(() {
+                                light0 = value;
+                              });
+
+                              try {
+                                await api.toggleIrrigation(
+                                    sprinklers[0].sprinklerId);
+                                print('Irrigation toggled successfully.');
+                              } catch (e) {
+                                print('Failed to toggle irrigation: $e');
+                              }
                             },
                           ),
                         ],
@@ -256,7 +261,7 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                                           padding:
                                               getPadding(top: 7, bottom: 6),
                                           child: Text(
-                                            "lbl_24".tr,
+                                            '${sprinklers[0].temperature}',
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.left,
                                             style: AppStyle.txtH1Gray900,
@@ -312,7 +317,7 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                                         Padding(
                                           padding: getPadding(bottom: 9),
                                           child: Text(
-                                            "lbl_11".tr,
+                                            '${sprinklers[0].soilMoistureLevel}',
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.left,
                                             style: AppStyle.txtH1,
