@@ -63,7 +63,6 @@ class UserManager {
   }
 }
 
-
 class Sprinkler {
   final int sprinklerId;
   final int userId;
@@ -114,5 +113,9 @@ class Sprinkler {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
     );
+  }
+  @override
+  String toString() {
+    return 'Sprinkler { sprinklerId: $sprinklerId, userId: $userId, uniqueCode: $uniqueCode, sprinklerName: $sprinklerName, location: $location, waterLevel: $waterLevel, soilMoistureLevel: $soilMoistureLevel, temperature: $temperature, irrigationStatus: $irrigationStatus, lastIrrigationTime: $lastIrrigationTime, scheduledIrrigationTime: $scheduledIrrigationTime, automaticIrrigation: $automaticIrrigation, createdAt: $createdAt, updatedAt: $updatedAt }';
   }
 }

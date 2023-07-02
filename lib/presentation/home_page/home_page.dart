@@ -6,6 +6,8 @@ import 'package:rainroot/widgets/app_bar/custom_app_bar.dart';
 import 'package:rainroot/widgets/custom_bottom_bar.dart';
 import 'package:rainroot/core/constants/utils.dart';
 import 'package:rainroot/data/apiClient/api_client.dart' as api;
+import 'dart:async';
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -16,12 +18,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<User>? _userFuture;
+  Future<User>? _userFuture = Completer<User>().future;
+  Future<List<Sprinkler>>? _sprinklerFuture =
+      Completer<List<Sprinkler>>().future;
 
   @override
   void initState() {
     super.initState();
     _getUser();
+    _getMySprinklers();
   }
 
   void _getUser() async {
@@ -49,13 +54,32 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _getMySprinklers() async {
+    // Get sprinklers data from API
+    setState(() {
+      _sprinklerFuture = api.getMySprinklers();
+    });
+    _sprinklerFuture!.then((sprinklers) {
+      print(
+          'Sprinklers at homepage: $sprinklers'); // Print the sprinkler objects
+    }).catchError((error) {
+      // If an error occurred while getting sprinklers data, show an error
+      setState(() {
+        _sprinklerFuture = Future.error('Failed to load sprinklers');
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-    return FutureBuilder<User>(
-      // Call the API to get the user data
-      future: _userFuture,
-      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+    return FutureBuilder<List<dynamic>>(
+      // Call the API to get the user and sprinkler data
+      future: Future.wait<dynamic>([
+        _userFuture as Future<dynamic>,
+        _sprinklerFuture as Future<dynamic>
+      ]),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // If the future is not completed, show a loading indicator
           return CircularProgressIndicator();
@@ -64,10 +88,11 @@ class _HomePageState extends State<HomePage> {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData) {
           // If the future completed but there's no data, display a message
-          return Text('No user data available');
+          return Text('No data available');
         } else {
           // The future has been completed, use the data
-          User user = snapshot.data!;
+          User user = snapshot.data![0] as User;
+          List<Sprinkler> sprinklers = snapshot.data![1] as List<Sprinkler>;
           return SafeArea(
             child: Scaffold(
               backgroundColor: ColorConstant.whiteA700,
@@ -256,7 +281,7 @@ class _HomePageState extends State<HomePage> {
                                                       MainAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "lbl_mon_arroseurs".tr,
+                                                      '${sprinklers[0].sprinklerName}',
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textAlign: TextAlign.left,
@@ -399,7 +424,7 @@ class _HomePageState extends State<HomePage> {
                                                                           top:
                                                                               18),
                                                                   child: Text(
-                                                                    "lbl_24".tr,
+                                                                    '${sprinklers[0].temperature}',
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -424,7 +449,10 @@ class _HomePageState extends State<HomePage> {
                                                                         TextAlign
                                                                             .left,
                                                                     style: AppStyle
-                                                                        .txtComfortaaRegular48,
+                                                                        .txtComfortaaRegular48
+                                                                        .copyWith(
+                                                                            fontSize:
+                                                                                20),
                                                                   ),
                                                                 ),
                                                               ],
@@ -487,7 +515,7 @@ class _HomePageState extends State<HomePage> {
                                                                           bottom:
                                                                               4),
                                                                   child: Text(
-                                                                    "lbl_11".tr,
+                                                                    '${sprinklers[0].soilMoistureLevel}',
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -513,7 +541,10 @@ class _HomePageState extends State<HomePage> {
                                                                         TextAlign
                                                                             .left,
                                                                     style: AppStyle
-                                                                        .txtComfortaaRegular36,
+                                                                        .txtComfortaaRegular36
+                                                                        .copyWith(
+                                                                            fontSize:
+                                                                                20),
                                                                   ),
                                                                 ),
                                                               ],
@@ -738,7 +769,7 @@ String getCurrentRoute(BottomBarEnum type) {
 /// to push the named route for the arroseursScreen.
 onTapMesplantes(BuildContext context) {
   NavigatorService.pushNamed(
-    AppRoutes.arroseursScreen,
+    AppRoutes.monArroseurScreen,
   );
 }
 
