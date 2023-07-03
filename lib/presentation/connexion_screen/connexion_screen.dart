@@ -160,9 +160,16 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                                       key: 'auth_token',
                                       value: data['accessToken'],
                                     );
-                                    print('Stored token: ${data['accessToken']}');
+                                    print(
+                                        'Stored token: ${data['accessToken']}');
+
+                                    // Store user id
                                     var userId = data['id'];
-                                    print('User ID connexionpage: $userId');
+                                    await storage.write(
+                                        key: 'UserId',
+                                        value: userId.toString());
+                                    print('Stored user ID: $userId');
+
                                     showSnackbar('Connexion réussie');
                                     NavigatorService.pushNamed(
                                       AppRoutes.homePage,
