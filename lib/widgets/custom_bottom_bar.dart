@@ -26,7 +26,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
     ),
     BottomMenuModel(
       icon: Icons.shower,
-      type: BottomBarEnum.Arrosoir,
+      type: BottomBarEnum.Spinkler,
     ),
     BottomMenuModel(
       icon: Icons.logout,
@@ -89,7 +89,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
                 Navigator.pushNamed(context, AppRoutes.homePage);
               } else if (bottomMenuList[index].type == BottomBarEnum.Profil) {
                 Navigator.pushNamed(context, AppRoutes.profilScreen);
-              } else if (bottomMenuList[index].type == BottomBarEnum.Arrosoir) {
+              } else if (bottomMenuList[index].type == BottomBarEnum.Spinkler) {
                 Navigator.pushNamed(context, AppRoutes.arroseursScreen);
               }
             });
@@ -103,7 +103,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
 enum BottomBarEnum {
   Home,
   Profil,
-  Arrosoir,
+  Spinkler,
   Logout,
 }
 

@@ -757,7 +757,7 @@ String getCurrentRoute(BottomBarEnum type) {
       return AppRoutes.homePage;
     case BottomBarEnum.Profil:
       return AppRoutes.profilScreen;
-    case BottomBarEnum.Arrosoir:
+    case BottomBarEnum.Spinkler:
       return AppRoutes.arroseursScreen;
     default:
       return "/";

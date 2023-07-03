@@ -313,7 +313,7 @@ class ProfilScreen extends StatelessWidget {
         return AppRoutes.homePage;
       case BottomBarEnum.Profil:
         return AppRoutes.profilScreen;
-      case BottomBarEnum.Arrosoir:
+      case BottomBarEnum.Spinkler:
         return AppRoutes.arroseursScreen;
       default:
         return "/";

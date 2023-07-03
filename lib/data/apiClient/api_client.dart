@@ -111,7 +111,7 @@ Future<User> getUserById(String id) async {
         "x-access-token": "$token",
       },
     );
-      print('Headers: ${response.headers}');
+    print('Headers: ${response.headers}');
 
     if (response.statusCode == 200) {
       var convertDataToJson = jsonDecode(response.body);
@@ -171,7 +171,9 @@ Future<List<Sprinkler>> getMySprinklers() async {
     if (response.statusCode == 200) {
       var convertDataToJson = jsonDecode(response.body);
       if (convertDataToJson is List) {
-        return convertDataToJson.map((json) => Sprinkler.fromJson(json)).toList();
+        return convertDataToJson
+            .map((json) => Sprinkler.fromJson(json))
+            .toList();
       } else {
         throw Exception('Invalid server response format');
       }
@@ -196,8 +198,7 @@ Future<List<Sprinkler>> getMySprinklers() async {
   }
 }
 
-
-Future<void> toggleIrrigation(int sprinklerId) async {
+Future<void> toggleIrrigation(int sprinklerId, bool isIrrigationOn) async {
   // Build the URL
   String url = Utils.baseUrl + "/sprinklers/$sprinklerId/toggle-irrigation";
 
@@ -219,13 +220,17 @@ Future<void> toggleIrrigation(int sprinklerId) async {
         "Content-Type": "application/json", // Specify the content type
       },
       body: jsonEncode({
-        "isIrrigationOn": true,
+        "isIrrigationOn": isIrrigationOn,
       }),
     );
 
     // Check the status code of the response
     if (response.statusCode == 200) {
-      print('Irrigation toggled successfully.');
+      if (isIrrigationOn) {
+        print('Irrigation activated successfully.');
+      } else {
+        print('Irrigation deactivated successfully.');
+      }
     } else if (response.statusCode == 403) {
       // Forbidden - Access token may be invalid or expired
       var errorJson = jsonDecode(response.body);
@@ -235,7 +240,109 @@ Future<void> toggleIrrigation(int sprinklerId) async {
       var errorJson = jsonDecode(response.body);
       throw Exception('Sprinkler not found: ${errorJson['message']}');
     } else {
-      throw Exception('Server responded with status code: ${response.statusCode}');
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    throw Exception('Connection refused');
+  } catch (e) {
+    throw Exception('An unexpected error occurred: $e');
+  }
+}
+
+// Future<void> activateAutomaticIrrigation(int sprinklerId) async {
+//   // Build the URL
+//   String url = Utils.baseUrl + "/sprinklers/$sprinklerId/automatic-irrigation";
+//   print('URL automatic: $url');
+
+//   final storage = new FlutterSecureStorage();
+//   // Get token from secure storage
+//   String? token = await storage.read(key: 'auth_token');
+
+//   if (token == null) {
+//     throw Exception('Token is null');
+//   }
+
+//   try {
+//     // Make the HTTP PUT request to the API
+//     final response = await http.put(
+//       Uri.parse(url),
+//       headers: {
+//         "Accept": "application/json",
+//         "x-access-token": "$token",
+//         "Content-Type": "application/json", // Specify the content type
+//       },
+//     );
+//     print('Response data: ${response.body}');
+
+//     // Check the status code of the response
+//     if (response.statusCode == 200) {
+//       print('Automatic irrigation activated successfully.');
+//     } else if (response.statusCode == 403) {
+//       // Forbidden - Access token may be invalid or expired
+//       var errorJson = jsonDecode(response.body);
+//       throw Exception('Access Denied: ${errorJson['message']}');
+//     } else if (response.statusCode == 404) {
+//       // Not Found - Sprinkler not found
+//       var errorJson = jsonDecode(response.body);
+//       throw Exception('Sprinkler not found: ${errorJson['message']}');
+//     } else {
+//       throw Exception(
+//           'Server responded with status code: ${response.statusCode}');
+//     }
+//   } on SocketException catch (_) {
+//     throw Exception('Connection refused');
+//   } catch (e) {
+//     throw Exception('An unexpected error occurred: $e');
+//   }
+// }
+Future<void> activateAutomaticIrrigation(
+    int sprinklerId, bool isAutoIrrigationOn) async {
+  // Build the URL
+  String url = Utils.baseUrl + "/sprinklers/$sprinklerId/automatic-irrigation";
+  print('URL automatic: $url');
+
+  final storage = new FlutterSecureStorage();
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+
+  if (token == null) {
+    throw Exception('Token is null');
+  }
+
+  try {
+    // Make the HTTP PUT request to the API
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+        "x-access-token": "$token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "isAutoIrrigationOn": isAutoIrrigationOn,
+      }),
+    );
+    print('Response data: ${response.body}');
+
+    // Check the status code of the response
+    if (response.statusCode == 200) {
+      if (isAutoIrrigationOn) {
+        print('Automatic irrigation activated successfully.');
+      } else {
+        print('Automatic irrigation deactivated successfully.');
+      }
+    } else if (response.statusCode == 403) {
+      // Forbidden - Access token may be invalid or expired
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
+    } else if (response.statusCode == 404) {
+      // Not Found - Sprinkler not found
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Sprinkler not found: ${errorJson['message']}');
+    } else {
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
     }
   } on SocketException catch (_) {
     throw Exception('Connection refused');

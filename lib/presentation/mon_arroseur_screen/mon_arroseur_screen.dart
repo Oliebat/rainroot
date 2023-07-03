@@ -22,9 +22,9 @@ class MonArroseurScreen extends StatefulWidget {
 
 class _MonArroseurScreenState extends State<MonArroseurScreen> {
   Future<List<Sprinkler>>? _sprinklerFuture;
-  bool light0 =
-      false; // Déclaration de la variable light0, assurez-vous de l'initialiser selon votre besoin
-
+  bool turnOnSprinkler =
+      false; // Déclaration de la variable turnOnSprinkler, assurez-vous de l'initialiser selon votre besoin
+  bool autoIrrigation = false;
   @override
   void initState() {
     super.initState();
@@ -141,32 +141,48 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                               "msg_tat_de_l_arrosage".tr,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
-                              style: AppStyle.txtParagraphe,
+                              style:
+                                  AppStyle.txtParagraphe.copyWith(fontSize: 15),
                             ),
                           ),
                           Switch(
-                            value: light0,
+                            value: turnOnSprinkler,
                             onChanged: (bool value) async {
-                              // note the async keyword here
+                              // Note the async keyword here
                               setState(() {
-                                light0 = value;
+                                turnOnSprinkler = value;
                               });
 
                               try {
                                 await api.toggleIrrigation(
-                                    sprinklers[0].sprinklerId);
-                                print('Arroseur activé.');
-                                if (!value) {
-                                  print('Arroseur désactivé.');
-                                }
+                                    sprinklers[0].sprinklerId, turnOnSprinkler);
+
+                                final snackBar = SnackBar(
+                                  content: Text(value
+                                      ? 'Arroseur manuel activé.'
+                                      : 'Arroseur manuel désactivé.'),
+                                  backgroundColor:
+                                      value ? Colors.blue : Colors.orange,
+                                  duration: const Duration(seconds: 1),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               } catch (e) {
-                                print('Failed to toggle irrigation: $e');
+                                print('Failed to toggle manual irrigation: $e');
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                      'Failed to toggle manual irrigation: $e'),
+                                  duration: const Duration(seconds: 1),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               }
                             },
                           ),
                         ],
                       ),
                     ),
+                    SizedBox(height: getVerticalSize(40)),
                     Padding(
                       padding: getPadding(left: 54, right: 53),
                       child: Row(
@@ -178,26 +194,45 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                               "Arosage automatique".tr,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
-                              style: AppStyle.txtParagraphe,
+                              style:
+                                  AppStyle.txtParagraphe.copyWith(fontSize: 15),
                             ),
                           ),
                           Switch(
-                            value: light0,
+                            value: autoIrrigation,
                             onChanged: (bool value) async {
-                              // note the async keyword here
                               setState(() {
-                                light0 = value;
+                                autoIrrigation = value;
                               });
 
                               try {
-                                await api.toggleIrrigation(
-                                    sprinklers[0].sprinklerId);
-                                print('Arroseur activé.');
-                                if (!value) {
-                                  print('Arroseur désactivé.');
-                                }
+                                await api.activateAutomaticIrrigation(
+                                  sprinklers[0].sprinklerId,
+                                  value, // Pass the switch value to the API method
+                                );
+
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                    value
+                                        ? 'Arrosage automatique activé.'
+                                        : 'Arrosage automatique désactivé.',
+                                  ),
+                                  backgroundColor:
+                                      value ? Colors.blue : Colors.orange,
+                                  duration: const Duration(seconds: 1),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               } catch (e) {
-                                print('Failed to toggle irrigation: $e');
+                                print(
+                                    'Failed to activate automatic irrigation: $e');
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                      'Failed to activate automatic irrigation: $e'),
+                                  duration: const Duration(seconds: 1),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               }
                             },
                           ),
@@ -383,51 +418,14 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                         ],
                       ),
                     ),
+                    SizedBox(height: getVerticalSize(20)),
                     CustomButton(
                       height: getVerticalSize(39),
-                      text: "msg_confirmer_les_changements".tr,
+                      text: "Allez sur la Home".tr,
                       margin: getMargin(left: 49, top: 39, right: 49),
                       onTap: () {
                         onTapConfirmerles(context);
                       },
-                    ),
-                    Padding(
-                      padding: getPadding(left: 49, top: 59, right: 49),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomIconButton(
-                            height: 48,
-                            width: 48,
-                            margin: getMargin(bottom: 1),
-                            variant: IconButtonVariant.OutlineBlack90033_1,
-                            padding: IconButtonPadding.PaddingAll6,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgHome,
-                            ),
-                          ),
-                          CustomIconButton(
-                            height: 48,
-                            width: 48,
-                            margin: getMargin(top: 1),
-                            variant: IconButtonVariant.OutlineBlack90033_1,
-                            padding: IconButtonPadding.PaddingAll6,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgUser,
-                            ),
-                          ),
-                          CustomIconButton(
-                            height: 48,
-                            width: 48,
-                            margin: getMargin(bottom: 1),
-                            variant: IconButtonVariant.OutlineBlack90033_1,
-                            padding: IconButtonPadding.PaddingAll6,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgCar,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -454,7 +452,7 @@ String getCurrentRoute(BottomBarEnum type) {
       return AppRoutes.homePage;
     case BottomBarEnum.Profil:
       return AppRoutes.profilScreen;
-    case BottomBarEnum.Arrosoir:
+    case BottomBarEnum.Spinkler:
       return AppRoutes.arroseursScreen;
     default:
       return "/";
