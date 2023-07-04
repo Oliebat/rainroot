@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool hasSprinklers = false;
   Future<User>? _userFuture = Completer<User>().future;
   Future<List<Sprinkler>>? _sprinklerFuture =
       Completer<List<Sprinkler>>().future;
@@ -73,6 +74,9 @@ class _HomePageState extends State<HomePage> {
       _sprinklerFuture = api.getMySprinklers();
     });
     _sprinklerFuture!.then((sprinklers) {
+      setState(() {
+        hasSprinklers = sprinklers.isNotEmpty;
+      });
       print(
           'Sprinklers at homepage: $sprinklers'); // Print the sprinkler objects
     }).catchError((error) {
@@ -81,6 +85,21 @@ class _HomePageState extends State<HomePage> {
         _sprinklerFuture = Future.error('Failed to load sprinklers');
       });
     });
+  }
+
+  void onTapMesplantes(BuildContext context) {
+    if (hasSprinklers) {
+      NavigatorService.pushNamed(AppRoutes.monArroseurScreen);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pas d\'arroseur associé'),
+          // snackbar red
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   @override
@@ -294,7 +313,9 @@ class _HomePageState extends State<HomePage> {
                                                       MainAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      '${sprinklers[0].sprinklerName}',
+                                                      hasSprinklers
+                                                          ? '${sprinklers[0].sprinklerName}'
+                                                          : "Pas d'arroseur associé",
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textAlign: TextAlign.left,
@@ -437,7 +458,9 @@ class _HomePageState extends State<HomePage> {
                                                                           top:
                                                                               18),
                                                                   child: Text(
-                                                                    '${sprinklers[0].temperature}',
+                                                                    hasSprinklers
+                                                                        ? '${sprinklers[0].temperature}'
+                                                                        : "Pas d'arroseur associé",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -528,7 +551,9 @@ class _HomePageState extends State<HomePage> {
                                                                           bottom:
                                                                               4),
                                                                   child: Text(
-                                                                    '${sprinklers[0].soilMoistureLevel}',
+                                                                    hasSprinklers
+                                                                        ? '${sprinklers[0].soilMoistureLevel}'
+                                                                        : "Pas d'arroseur associé",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -783,12 +808,17 @@ String getCurrentRoute(BottomBarEnum type) {
 /// The [BuildContext] parameter is used to build the navigation stack.
 /// When the action is triggered, this function uses the `NavigatorService`
 /// to push the named route for the arroseursScreen.
-onTapMesplantes(BuildContext context) {
-  NavigatorService.pushNamed(
-    AppRoutes.monArroseurScreen,
-  );
-}
-
+// onTapMesplantes(BuildContext context) {
+//   if (hasSprinklers) {
+//     NavigatorService.pushNamed(AppRoutes.monArroseurScreen);
+//   } else {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         content: Text('Pas d\'arroseur associé'),
+//       ),
+//     );
+//   }
+// }
 /// Navigates to the arroseursScreen when the action is triggered.
 ///
 /// The [BuildContext] parameter is used to build the navigation stack.

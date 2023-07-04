@@ -184,7 +184,7 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
 
                                     showSnackbar('Création du compte réussie');
                                     NavigatorService.pushNamed(
-                                      AppRoutes.homeContainerScreen,
+                                      AppRoutes.homePage,
                                     );
                                   } else if (data.containsKey('error')) {
                                     showSnackbar(data[
