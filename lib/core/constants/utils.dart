@@ -103,9 +103,13 @@ class Sprinkler {
       uniqueCode: json['uniqueCode'],
       sprinklerName: json['sprinkler_name'],
       location: json['location'],
-      waterLevel: json['water_level'].toDouble(),
-      soilMoistureLevel: json['soil_moisture_level'].toDouble(),
-      temperature: json['temperature'].toDouble(),
+      waterLevel:
+          json['water_level'] != null ? json['water_level'].toDouble() : 0.0,
+      soilMoistureLevel: json['soil_moisture_level'] != null
+          ? json['soil_moisture_level'].toDouble()
+          : 0.0,
+      temperature:
+          json['temperature'] != null ? json['temperature'].toDouble() : 0.0,
       irrigationStatus: json['isIrrigationOn'] as bool,
       lastIrrigationTime: json['last_irrigation_time'],
       scheduledIrrigationTime: json['scheduledIrrigationTime'],

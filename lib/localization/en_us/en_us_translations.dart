@@ -15,7 +15,7 @@ final Map<String, String> enUs = {
   "lbl_ajouter": "Ajouter",
   "lbl_entretenez_vos": "Entretenez vos ",
   "msg_ajoutez_et_de_configurez":
-      "Ajoutez et de configurez facilement vos robots d'arrosage automatique. personnalisez les paramètres d'arrosage selon vos besoins, le tout en quelques clics",
+      "Ajoutez et configurez facilement vos robots d'arrosage automatique. Personnalisez les paramètres d'arrosage selon vos besoins.",
   "lbl_pr_nom": "Prénom",
   "lbl_creation_compte": "creation_compte",
   "lbl_humidit": "Humidité",

@@ -448,3 +448,61 @@ Future<void> deleteSprinkler(int sprinklerId) async {
     throw Exception('An unexpected error occurred: $e');
   }
 }
+
+Future<Map<String, dynamic>> createSprinkler(
+    String uniqueCode, String sprinkler_name, String location, String userId) async {
+  
+  String url = Utils.baseUrl + "/sprinklers";
+  
+  // Create storage
+  final storage = new FlutterSecureStorage();
+
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+
+  if (token == null) {
+    print('Error occurred: Token is null');
+    throw Exception('Token is null');
+  }
+
+  print('URL for request: $url');
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        "uniqueCode": uniqueCode,
+        "sprinkler_name": sprinkler_name,
+        "location": location,
+        "userId": userId
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+    );
+
+    if (response.statusCode == 201) {
+      var convertDataToJson = jsonDecode(response.body);
+      if (convertDataToJson is Map<String, dynamic>) {
+        return convertDataToJson;
+      } else {
+        return {'error': 'Format de réponse invalide du serveur'};
+      }
+    } else if (response.statusCode == 400) {
+      // Bad Request - Invalid data
+      var errorJson = jsonDecode(response.body);
+      return {'error': errorJson['message']};
+    } else {
+      return {
+        'error':
+            'Le serveur a répondu avec le code de statut: ${response.statusCode}'
+      };
+    }
+  } on SocketException catch (_) {
+    return {'error': 'Connexion refusée'};
+  } catch (e) {
+    print('Error occurred: $e');
+    return {'error': 'Une erreur inattendue est survenue'};
+  }
+}
