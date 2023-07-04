@@ -28,6 +28,20 @@ class _HomePageState extends State<HomePage> {
     _getMySprinklers();
   }
 
+  void refreshPage() {
+    setState(() {
+      _userFuture = Completer<User>().future;
+      _sprinklerFuture = Completer<List<Sprinkler>>().future;
+    });
+    _getUser();
+    _getMySprinklers();
+  }
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    refreshPage(); // Mettre à jour la page d'accueil
+  }
+
   void _getUser() async {
     // Get user id from UserManager
     String? userId = await UserManager().getUserId();

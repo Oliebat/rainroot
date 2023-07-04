@@ -67,8 +67,8 @@ class Sprinkler {
   final int sprinklerId;
   final int userId;
   final String uniqueCode;
-  final String sprinklerName;
-  final String location;
+  String sprinklerName;
+  String location;
   final double waterLevel;
   final double soilMoistureLevel;
   final double temperature;
@@ -89,8 +89,8 @@ class Sprinkler {
     required this.soilMoistureLevel,
     required this.temperature,
     required this.irrigationStatus,
-    this.lastIrrigationTime,
-    this.scheduledIrrigationTime,
+    required this.lastIrrigationTime,
+    required this.scheduledIrrigationTime,
     required this.automaticIrrigation,
     required this.createdAt,
     required this.updatedAt,

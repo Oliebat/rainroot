@@ -350,3 +350,59 @@ Future<void> activateAutomaticIrrigation(
     throw Exception('An unexpected error occurred: $e');
   }
 }
+
+Future<void> updateSprinkler(
+    int sprinklerId, String sprinklerName, String location) async {
+  String url = Utils.baseUrl + "/sprinklers/$sprinklerId";
+
+  final storage = new FlutterSecureStorage();
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+
+  if (token == null) {
+    throw Exception('Token is null');
+  }
+
+  try {
+    final Map<String, dynamic> requestData = {
+      "sprinkler_name": sprinklerName,
+      "location": location,
+    };
+
+    if (requestData.containsValue(null)) {
+      throw Exception('Invalid data format: Missing required fields');
+    }
+
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+        "x-access-token": "$token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(requestData),
+    );
+
+    print('API URL: $url');
+    print('Updated Sprinkler Name: $sprinklerName');
+    print('Updated Sprinkler Location: $location');
+    print('Response Status Code: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      print('Sprinkler updated successfully.');
+    } else if (response.statusCode == 403) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
+    } else if (response.statusCode == 404) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Sprinkler not found: ${errorJson['message']}');
+    } else {
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    throw Exception('Connection refused');
+  } catch (e) {
+    throw Exception('An unexpected error occurred: $e');
+  }
+}

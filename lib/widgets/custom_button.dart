@@ -109,8 +109,12 @@ class CustomButton extends StatelessWidget {
 
   _setColor() {
     switch (variant) {
+      case ButtonVariant.FillBluegray700:
+        return ColorConstant.blueGray700;
       case ButtonVariant.FillBluegray300:
         return ColorConstant.blueGray300;
+      case ButtonVariant.FillCustomColor:
+        return _setCustomColor(); // Utilisez la nouvelle méthode pour la couleur personnalisée
       default:
         return ColorConstant.blueGray700;
     }
@@ -157,6 +161,10 @@ class CustomButton extends StatelessWidget {
         );
     }
   }
+
+  _setCustomColor() {
+    return Color(0xFFEDBCB2);
+  }
 }
 
 enum ButtonShape {
@@ -172,6 +180,7 @@ enum ButtonPadding {
 enum ButtonVariant {
   FillBluegray700,
   FillBluegray300,
+  FillCustomColor,
 }
 
 enum ButtonFontStyle {
