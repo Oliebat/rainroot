@@ -7,6 +7,8 @@ import 'package:rainroot/widgets/custom_bottom_bar.dart';
 import 'package:rainroot/core/constants/utils.dart';
 import 'package:rainroot/data/apiClient/api_client.dart' as api;
 import 'dart:async';
+// path arrroseurs_screen
+import 'package:rainroot/presentation/mon_arroseur_screen/mon_arroseur_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -23,10 +25,22 @@ class _HomePageState extends State<HomePage> {
       Completer<List<Sprinkler>>().future;
 
   @override
+  @override
   void initState() {
     super.initState();
     _getUser();
     _getMySprinklers();
+  }
+
+  void navigateToMonArroseurScreen() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MonArroseurScreen(),
+      ),
+    );
+
+    refreshPage(); // Appeler refreshPage après le retour de MonArroseurScreen
   }
 
   void refreshPage() {
@@ -96,7 +110,7 @@ class _HomePageState extends State<HomePage> {
           content: Text('Pas d\'arroseur associé'),
           // snackbar red
           backgroundColor: Colors.redAccent,
-          duration: Duration(seconds: 1),
+          duration: Duration(seconds: 2),
         ),
       );
     }

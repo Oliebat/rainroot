@@ -130,6 +130,29 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
     );
   }
 
+void _deleteSprinkler(int sprinklerId, BuildContext context) async {
+  try {
+    await api.deleteSprinkler(sprinklerId);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Arrosoir supprimé avec succès.'),
+        backgroundColor: Colors.blue,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
+  } catch (e) {
+    print('Erreur lors de la suppression de l\'arrosoir : $e');
+  }
+}
+
   void _updateSprinkler(
       int sprinklerId, String? sprinklerName, String? location) async {
     try {
@@ -505,7 +528,7 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: getVerticalSize(2)),
+                      // SizedBox(height: getVerticalSize(2)),
                       CustomButton(
                         height: getVerticalSize(39),
                         text: "Modifier Arrosoir".tr,
@@ -520,24 +543,27 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                           }
                         },
                       ),
-                      SizedBox(height: getVerticalSize(5)),
+                      // SizedBox(height: getVerticalSize(5)),
                       CustomButton(
                         height: getVerticalSize(39),
                         text: "Allez sur la Home".tr,
-                        margin: getMargin(left: 49, top: 39, right: 49),
+                        margin: getMargin(left: 49, top: 20, right: 49),
                         onTap: () {
                           onTapConfirmerles(context);
                         },
                       ),
-                      SizedBox(height: getVerticalSize(5)),
+                      // SizedBox(height: getVerticalSize(5)),
                       CustomButton(
                         height: getVerticalSize(39),
                         text: "Supprimer Arrosoir".tr,
-                        margin: getMargin(left: 49, top: 39, right: 49),
+                        margin: getMargin(left: 49, top: 20, right: 49),
+                        variant: ButtonVariant.FillRedAccent,
                         onTap: () {
-                          onTapConfirmerles(context);
+                          _deleteSprinkler(sprinklers[0].sprinklerId,
+                              context); // Remplacez sprinklerId par l'ID de l'arrosoir à supprimer
                         },
                       ),
+
                       SizedBox(height: getVerticalSize(20)),
                     ],
                   ),

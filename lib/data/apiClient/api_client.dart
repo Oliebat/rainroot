@@ -406,3 +406,45 @@ Future<void> updateSprinkler(
     throw Exception('An unexpected error occurred: $e');
   }
 }
+
+Future<void> deleteSprinkler(int sprinklerId) async {
+  String url = Utils.baseUrl + "/sprinklers/$sprinklerId";
+
+  final storage = new FlutterSecureStorage();
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+
+  if (token == null) {
+    throw Exception('Token is null');
+  }
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+        "x-access-token": "$token",
+      },
+    );
+
+    print('API URL: $url');
+    print('Response Status Code: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      print('Sprinkler deleted successfully.');
+    } else if (response.statusCode == 403) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
+    } else if (response.statusCode == 404) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Sprinkler not found: ${errorJson['message']}');
+    } else {
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    throw Exception('Connection refused');
+  } catch (e) {
+    throw Exception('An unexpected error occurred: $e');
+  }
+}
