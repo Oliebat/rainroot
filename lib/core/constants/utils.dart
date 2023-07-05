@@ -2,8 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Utils {
-  static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
+  // static String baseUrl = 'http://192.168.1.16:8080/api'; //ip maison
   // static String baseUrl = 'http://172.16.0.45:8080/api'; // NFS
+  static String baseUrl = 'http://10.0.2.2:8080/api'; // localhost emulator
+  // static String baseUrl = 'https://rainroot.ocean-application.fr/api';
 }
 
 class TokenUtils {

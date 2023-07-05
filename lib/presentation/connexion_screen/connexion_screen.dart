@@ -190,17 +190,11 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                             }
                           },
                         ),
-
                         if (fieldsEmptyError)
                           Text(
                             'Vos champs sont vides',
                             style: TextStyle(color: Colors.red),
                           ),
-                        // if (errorMsg?.isNotEmpty ?? false)
-                        //   Text(
-                        //     errorMsg!,
-                        //     style: TextStyle(color: Colors.red),
-                        //   ),
                       ],
                     ),
                   ),

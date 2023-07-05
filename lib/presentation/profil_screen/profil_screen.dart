@@ -1,301 +1,346 @@
-import 'bloc/profil_bloc.dart';
-import 'models/profil_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rainroot/core/app_export.dart';
+import 'package:rainroot/core/constants/utils.dart';
 import 'package:rainroot/core/utils/validation_functions.dart';
+import 'package:rainroot/data/apiClient/api_client.dart' as api;
 import 'package:rainroot/presentation/home_page/home_page.dart';
 import 'package:rainroot/widgets/custom_bottom_bar.dart';
 import 'package:rainroot/widgets/custom_button.dart';
 import 'package:rainroot/widgets/custom_icon_button.dart';
+import 'package:rainroot/widgets/custom_image_view.dart';
 import 'package:rainroot/widgets/custom_text_form_field.dart';
+import 'package:rainroot/presentation/starter_screen/starter_screen.dart';
 
-// ignore_for_file: must_be_immutable
-class ProfilScreen extends StatelessWidget {
+import 'dart:async';
+
+class ProfilScreen extends StatefulWidget {
   ProfilScreen({Key? key}) : super(key: key);
 
-  GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+  static WidgetBuilder get builder => (BuildContext context) => ProfilScreen();
 
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  _ProfilScreenState createState() => _ProfilScreenState();
+}
 
-  static Widget builder(BuildContext context) {
-    return BlocProvider<ProfilBloc>(
-        create: (context) =>
-            ProfilBloc(ProfilState(profilModelObj: ProfilModel()))
-              ..add(ProfilInitialEvent()),
-        child: ProfilScreen());
+class _ProfilScreenState extends State<ProfilScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final storage = FlutterSecureStorage();
+  bool fieldsEmptyError = false;
+  String? errorMsg;
+  Future<User>? _userFuture;
+
+  User? user; // Newly added User object
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
+
+  void _getUser() async {
+    // Get user id from UserManager
+    String? userId = await UserManager().getUserId();
+    print('UserId: $userId');
+
+    if (userId != null) {
+      // Get user data from API
+      _userFuture = api.getUserById(userId);
+      _userFuture!.then((user) {
+        print('User at profil: $user'); // Print the user object
+
+        // Print user details
+        print('First Name: ${user.firstName}');
+        print('Last Name: ${user.lastName}');
+        print('Email: ${user.email}');
+
+        // Get user picture URL
+        String? picture = user.picture;
+        print('User Picture: $picture');
+
+        // Update the text field with user information and save the user object
+        setState(() {
+          _firstNameController.text = user.firstName ?? "";
+          _nameController.text = user.lastName ?? "";
+          _emailController.text = user.email ?? "";
+          _passwordController.text = '';
+
+          // Save the user object
+          this.user = user;
+        });
+      }).catchError((error) {
+        setState(() {
+          _userFuture = Future.error(error);
+        });
+      });
+    } else {
+      // If the user id is null, show an error
+      setState(() {
+        _userFuture = Future.error('User id is null');
+      });
+    }
+  }
+
+  void _deleteUser(int? userId, BuildContext context) async {
+    if (userId != null) {
+      try {
+        await api.deleteUser(userId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Compte supprimé avec succès.'),
+            backgroundColor: Colors.blue,
+            duration: const Duration(seconds: 1),
+          ),
+        );
+
+        final storage = new FlutterSecureStorage();
+        await storage.deleteAll();
+
+        Navigator.pushReplacementNamed(context, AppRoutes.starterScreen);
+      } catch (e) {
+        print('Erreur lors de la suppression du compte : $e');
+      }
+    } else {
+      print('Erreur : userId est null.');
+    }
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmation de suppression"),
+          content: Text(
+              "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est définitive."),
+          actions: [
+            TextButton(
+              child: Text("Non"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              },
+            ),
+            TextButton(
+              child: Text("Oui"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                _deleteUser(user?.id, context); // Supprimez l'utilisateur
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       backgroundColor: ColorConstant.whiteA700,
       resizeToAvoidBottomInset: false,
-      body: Form(
+      body: SingleChildScrollView(
+        child: Form(
           key: _formKey,
-          child: SizedBox(
-              width: double.maxFinite,
-              child:
-                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                SizedBox(
-                    width: double.maxFinite,
-                    child: Container(
-                        width: double.maxFinite,
-                        padding: getPadding(
-                            left: 20, top: 17, right: 20, bottom: 17),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(ImageConstant.imgGroup6),
-                                fit: BoxFit.cover)),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(20, 17, 20, 17),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(ImageConstant.imgGroup6),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomIconButton(
+                        height: 48,
+                        width: 48,
+                        margin: EdgeInsets.only(top: 2),
+                        shape: IconButtonShape.CircleBorder24,
+                        onTap: () {
+                          onTapBtnArrowleft(context);
+                        },
+                        child: CustomImageView(
+                          svgPath: ImageConstant.imgArrowleft,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          height: 106,
+                          width: 136,
+                          margin: EdgeInsets.only(top: 28),
+                          child: Stack(
+                            alignment: Alignment.centerRight,
                             children: [
+                              CustomImageView(
+                                url: user?.picture ?? '',
+                                height: 106,
+                                width: 106,
+                                radius: BorderRadius.circular(50),
+                                alignment: Alignment.centerLeft,
+                              ),
                               CustomIconButton(
-                                  height: 48,
-                                  width: 48,
-                                  margin: getMargin(top: 2),
-                                  shape: IconButtonShape.CircleBorder24,
-                                  onTap: () {
-                                    onTapBtnArrowleft(context);
-                                  },
-                                  child: CustomImageView(
-                                      svgPath: ImageConstant.imgArrowleft)),
-                              Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                      height: getVerticalSize(106),
-                                      width: getHorizontalSize(136),
-                                      margin: getMargin(top: 28),
-                                      child: Stack(
-                                          alignment: Alignment.centerRight,
-                                          children: [
-                                            CustomImageView(
-                                                imagePath:
-                                                    ImageConstant.imgRectangle2,
-                                                height: getSize(106),
-                                                width: getSize(106),
-                                                radius: BorderRadius.circular(
-                                                    getHorizontalSize(50)),
-                                                alignment:
-                                                    Alignment.centerLeft),
-                                            CustomIconButton(
-                                                height: 48,
-                                                width: 48,
-                                                variant: IconButtonVariant
-                                                    .OutlineBlack90033_1,
-                                                padding: IconButtonPadding
-                                                    .PaddingAll6,
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: CustomImageView(
-                                                    svgPath: ImageConstant
-                                                        .imgCamera))
-                                          ])))
-                            ]))),
-                Padding(
-                    padding: getPadding(top: 14),
-                    child: Text("lbl_bonjour_clara2".tr,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                        style: AppStyle.txtH1Gray900)),
-                Padding(
-                    padding: getPadding(left: 49, top: 32, right: 49),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                              padding: getPadding(left: 11),
-                              child: Text("lbl_pr_nom".tr,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.left,
-                                  style: AppStyle.txtBoutons)),
-                          BlocSelector<ProfilBloc, ProfilState,
-                                  TextEditingController?>(
-                              selector: (state) => state.firstnameController,
-                              builder: (context, firstnameController) {
-                                return CustomTextFormField(
-                                    focusNode: FocusNode(),
-                                    autofocus: true,
-                                    controller: firstnameController,
-                                    hintText: "lbl_clara".tr,
-                                    margin: getMargin(top: 17),
-                                    suffix: Container(
-                                        margin: getMargin(
-                                            left: 30,
-                                            top: 2,
-                                            right: 5,
-                                            bottom: 3),
-                                        child: CustomImageView(
-                                            svgPath:
-                                                ImageConstant.imgCheckmark)),
-                                    suffixConstraints: BoxConstraints(
-                                        maxHeight: getVerticalSize(34)));
-                              })
-                        ])),
-                Padding(
-                    padding: getPadding(left: 49, top: 12, right: 49),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                              padding: getPadding(left: 11),
-                              child: Text("lbl_nom".tr,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.left,
-                                  style: AppStyle.txtBoutons)),
-                          BlocSelector<ProfilBloc, ProfilState,
-                                  TextEditingController?>(
-                              selector: (state) => state.lastnameController,
-                              builder: (context, lastnameController) {
-                                return CustomTextFormField(
-                                    focusNode: FocusNode(),
-                                    autofocus: true,
-                                    controller: lastnameController,
-                                    hintText: "lbl_tidjane".tr,
-                                    margin: getMargin(top: 17),
-                                    suffix: Container(
-                                        margin: getMargin(
-                                            left: 30,
-                                            top: 2,
-                                            right: 5,
-                                            bottom: 3),
-                                        child: CustomImageView(
-                                            svgPath:
-                                                ImageConstant.imgCheckmark)),
-                                    suffixConstraints: BoxConstraints(
-                                        maxHeight: getVerticalSize(34)));
-                              })
-                        ])),
-                Padding(
-                    padding: getPadding(left: 50, top: 12, right: 48),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                              padding: getPadding(left: 11),
-                              child: Text("lbl_adresse_mail".tr,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.left,
-                                  style: AppStyle.txtBoutons)),
-                          BlocSelector<ProfilBloc, ProfilState,
-                                  TextEditingController?>(
-                              selector: (state) => state.emailController,
-                              builder: (context, emailController) {
-                                return CustomTextFormField(
-                                    focusNode: FocusNode(),
-                                    autofocus: true,
-                                    controller: emailController,
-                                    hintText: "msg_claratidjane_email_com".tr,
-                                    margin: getMargin(top: 17),
-                                    textInputType: TextInputType.emailAddress,
-                                    suffix: Container(
-                                        margin: getMargin(
-                                            left: 30,
-                                            top: 3,
-                                            right: 6,
-                                            bottom: 2),
-                                        child: CustomImageView(
-                                            svgPath:
-                                                ImageConstant.imgCheckmark)),
-                                    suffixConstraints: BoxConstraints(
-                                        maxHeight: getVerticalSize(34)),
-                                    validator: (value) {
-                                      if (value == null ||
-                                          (!isValidEmail(value,
-                                              isRequired: true))) {
-                                        return "Please enter valid email";
-                                      }
-                                      return null;
-                                    });
-                              })
-                        ])),
-                Padding(
-                    padding: getPadding(left: 50, top: 13, right: 48),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                              padding: getPadding(left: 11),
-                              child: Text("lbl_mot_de_passe".tr,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.left,
-                                  style: AppStyle.txtBoutons)),
-                          BlocSelector<ProfilBloc, ProfilState,
-                                  TextEditingController?>(
-                              selector: (state) => state.languageController,
-                              builder: (context, languageController) {
-                                return CustomTextFormField(
-                                    focusNode: FocusNode(),
-                                    autofocus: true,
-                                    controller: languageController,
-                                    hintText: "msg".tr,
-                                    margin: getMargin(top: 16),
-                                    textInputAction: TextInputAction.done,
-                                    suffix: Container(
-                                        padding: getPadding(
-                                            left: 2,
-                                            top: 6,
-                                            right: 2,
-                                            bottom: 7),
-                                        margin: getMargin(
-                                            left: 30,
-                                            top: 2,
-                                            right: 12,
-                                            bottom: 2),
-                                        decoration: BoxDecoration(
-                                            color: ColorConstant.whiteA700,
-                                            borderRadius: BorderRadius.circular(
-                                                getHorizontalSize(6))),
-                                        child: CustomImageView(
-                                            svgPath: ImageConstant.imgEye)),
-                                    suffixConstraints: BoxConstraints(
-                                        maxHeight: getVerticalSize(34)));
-                              })
-                        ])),
-                CustomButton(
-                    height: getVerticalSize(39),
-                    text: "msg_confirmer_les_changements".tr,
-                    margin: getMargin(left: 49, top: 76, right: 49),
-                    onTap: () {
-                      onTapConfirmerles(context);
-                    }),
-                Spacer(),
-                Padding(
-                    padding: getPadding(left: 49, right: 49),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomIconButton(
-                              height: 48,
-                              width: 48,
-                              margin: getMargin(bottom: 1),
-                              variant: IconButtonVariant.OutlineBlack90033_1,
-                              padding: IconButtonPadding.PaddingAll6,
-                              child: CustomImageView(
-                                  svgPath: ImageConstant.imgHome)),
-                          CustomIconButton(
-                              height: 48,
-                              width: 48,
-                              margin: getMargin(top: 1),
-                              variant: IconButtonVariant.OutlineBlack90033_1,
-                              padding: IconButtonPadding.PaddingAll6,
-                              child: CustomImageView(
-                                  svgPath: ImageConstant.imgUser)),
-                          CustomIconButton(
-                              height: 48,
-                              width: 48,
-                              margin: getMargin(bottom: 1),
-                              variant: IconButtonVariant.OutlineBlack90033_1,
-                              padding: IconButtonPadding.PaddingAll6,
-                              child: CustomImageView(
-                                  svgPath: ImageConstant.imgCar))
-                        ]))
-              ]))),
+                                height: 48,
+                                width: 48,
+                                variant: IconButtonVariant.OutlineBlack90033_1,
+                                padding: IconButtonPadding.PaddingAll6,
+                                alignment: Alignment.centerRight,
+                                child: CustomImageView(
+                                  svgPath: ImageConstant.imgCamera,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 14),
+                child: Text(
+                  'Bonjour, ${user?.firstName ?? ''}'.tr,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.left,
+                  style: AppStyle.txtH1Gray900,
+                ),
+              ),
+              SizedBox(height: getVerticalSize(70)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 48),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 40),
+                    CustomTextFormField(
+                      controller: _firstNameController,
+                      hintText: "Prénom".tr,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre prénom';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 40),
+                    CustomTextFormField(
+                      controller: _nameController,
+                      hintText: "Nom".tr,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre nom';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 40),
+                    CustomTextFormField(
+                      controller: _emailController,
+                      hintText: "Email".tr,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre adresse e-mail';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 40),
+                    CustomTextFormField(
+                      controller: _passwordController,
+                      hintText: "Mot de passe".tr,
+                      isObscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre mot de passe';
+                        }
+                        return null;
+                      },
+                    ),
+                    CustomButton(
+                      height: 39,
+                      text: "Mettre à jour".tr,
+                      margin: EdgeInsets.only(top: 52, bottom: 30),
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          var firstName = _firstNameController.text;
+                          var lastName = _nameController.text;
+                          var email = _emailController.text;
+                          var password = _passwordController.text;
+
+                          if (email.isEmpty ||
+                              password.isEmpty ||
+                              firstName.isEmpty ||
+                              lastName.isEmpty) {
+                            setState(() {
+                              fieldsEmptyError = true;
+                            });
+                          } else {
+                            setState(() {
+                              fieldsEmptyError = false;
+                            });
+                            try {
+                              var data = await api.updateUser(
+                                firstName,
+                                lastName,
+                                email,
+                                password,
+                              );
+
+                              print('Data from updateUser: $data');
+
+                              if (data.containsKey('message') &&
+                                  data['message'] ==
+                                      'User updated successfully!') {
+                                showSnackbar('Modification du compte réussie');
+                                NavigatorService.pushNamed(AppRoutes.homePage);
+                              } else if (data.containsKey('error')) {
+                                showSnackbar(data[
+                                    'error']); // Afficher le message d'erreur renvoyé par le serveur
+                              } else {
+                                showSnackbar(
+                                    'Échec de la modification du compte');
+                              }
+                            } catch (e) {
+                              showSnackbar(
+                                  'Une erreur inattendue est survenue');
+                              print('Error during account update: $e');
+                            }
+                          }
+                        }
+                      },
+                    ),
+                    CustomButton(
+                      height: getVerticalSize(39),
+                      text: "Supprimer Arrosoir".tr,
+                      margin: getMargin(left: 49, top: 20, right: 49),
+                      variant: ButtonVariant.FillRedAccent,
+                      onTap: () {
+                        _showDeleteConfirmationDialog(
+                            context); // Affiche la boîte de dialogue modale de confirmation
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
       bottomNavigationBar: CustomBottomBar(
         onChanged: (BottomBarEnum type) {
           Navigator.of(context).pushNamed(
@@ -303,10 +348,9 @@ class ProfilScreen extends StatelessWidget {
           );
         },
       ),
-    ));
+    );
   }
 
-  ///Handling route based on bottom click actions
   String getCurrentRoute(BottomBarEnum type) {
     switch (type) {
       case BottomBarEnum.Home:
@@ -320,11 +364,7 @@ class ProfilScreen extends StatelessWidget {
     }
   }
 
-  ///Handling page based on route
-  Widget getCurrentPage(
-    BuildContext context,
-    String currentRoute,
-  ) {
+  Widget getCurrentPage(BuildContext context, String currentRoute) {
     switch (currentRoute) {
       case AppRoutes.homePage:
         return HomePage.builder(context);
@@ -333,24 +373,30 @@ class ProfilScreen extends StatelessWidget {
     }
   }
 
-  /// Navigates to the previous screen.
-  ///
-  /// This function takes a [BuildContext] object as a parameter, which is
-  /// used to build the navigation stack. When the action is triggered, this
-  /// function uses the [NavigatorService] to navigate to the previous screen
-  /// in the navigation stack.
   onTapBtnArrowleft(BuildContext context) {
     NavigatorService.goBack();
   }
 
-  /// Navigates to the homeContainerScreen when the action is triggered.
-  ///
-  /// The [BuildContext] parameter is used to build the navigation stack.
-  /// When the action is triggered, this function uses the `NavigatorService`
-  /// to push the named route for the homeContainerScreen.
   onTapConfirmerles(BuildContext context) {
     NavigatorService.pushNamed(
       AppRoutes.homeContainerScreen,
     );
+  }
+
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.greenAccent,
+      ),
+    );
+  }
+}
+
+class DefaultWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

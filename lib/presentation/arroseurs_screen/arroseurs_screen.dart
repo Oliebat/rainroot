@@ -262,13 +262,13 @@ class _ArroseursScreenState extends State<ArroseursScreen> {
                             children: [
                               Container(
                                 height: getVerticalSize(
-                                    500), // Ajustez la hauteur en fonction de vos besoins
+                                    500), // Adjust the height as per your needs
                                 child: GridView.count(
                                   crossAxisCount: 2,
                                   physics: NeverScrollableScrollPhysics(),
                                   children: sprinklers.map((sprinkler) {
                                     return Container(
-                                      margin: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(4),
                                       padding: getPadding(all: 10),
                                       decoration: AppDecoration
                                           .outlineBlack900331
@@ -321,19 +321,25 @@ class _ArroseursScreenState extends State<ArroseursScreen> {
                                           ),
                                           Padding(
                                             padding:
-                                                getPadding(top: 18, bottom: 9),
-                                            child: Text(
-                                              '${sprinkler.sprinklerName}',
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.left,
-                                              style: AppStyle.txtH2Black900,
+                                                getPadding(top: 18, bottom: 20),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  '${sprinkler.sprinklerName}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.left,
+                                                  style: AppStyle.txtH2Black900,
+                                                ),
+                                                Text(
+                                                  '${sprinkler.location}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.left,
+                                                  style: AppStyle.txtH2Black900,
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                          Text(
-                                            '${sprinkler.location}',
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.left,
-                                            style: AppStyle.txtH2Black900,
                                           ),
                                         ],
                                       ),

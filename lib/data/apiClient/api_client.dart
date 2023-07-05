@@ -449,11 +449,10 @@ Future<void> deleteSprinkler(int sprinklerId) async {
   }
 }
 
-Future<Map<String, dynamic>> createSprinkler(
-    String uniqueCode, String sprinkler_name, String location, String userId) async {
-  
+Future<Map<String, dynamic>> createSprinkler(String uniqueCode,
+    String sprinkler_name, String location, String userId) async {
   String url = Utils.baseUrl + "/sprinklers";
-  
+
   // Create storage
   final storage = new FlutterSecureStorage();
 
@@ -504,5 +503,114 @@ Future<Map<String, dynamic>> createSprinkler(
   } catch (e) {
     print('Error occurred: $e');
     return {'error': 'Une erreur inattendue est survenue'};
+  }
+}
+
+Future<Map<String, dynamic>> updateUser(
+    String firstName, String lastName, String email, String password) async {
+  // Create storage
+  final storage = new FlutterSecureStorage();
+
+  // Get user id and token from secure storage
+  String? userId = await storage.read(key: 'UserId');
+  String? token = await storage.read(key: 'auth_token');
+
+  if (userId == null) {
+    print('Error occurred: User ID is null');
+    throw Exception('User ID is null');
+  }
+
+  if (token == null) {
+    print('Error occurred: Token is null');
+    throw Exception('Token is null');
+  }
+
+  String url =
+      Utils.baseUrl + "/users/" + userId; // Adjust URL according to your API
+  print('URL for request: $url');
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      body: jsonEncode({
+        "firstName": firstName,
+        "lastName": lastName,
+        "email": email,
+        "password": password,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var convertDataToJson = jsonDecode(response.body);
+      if (convertDataToJson is Map<String, dynamic>) {
+        return convertDataToJson;
+      } else {
+        return {'error': 'Invalid server response format'};
+      }
+    } else if (response.statusCode == 400) {
+      // Bad Request - Invalid data
+      var errorJson = jsonDecode(response.body);
+      return {'error': errorJson['message']};
+    } else if (response.statusCode == 404) {
+      // Not Found - User does not exist
+      var errorJson = jsonDecode(response.body);
+      return {'error': errorJson['message']};
+    } else {
+      return {
+        'error': 'Server responded with status code: ${response.statusCode}'
+      };
+    }
+  } on SocketException catch (_) {
+    return {'error': 'Connection refused'};
+  } catch (e) {
+    print('Error occurred: $e');
+    return {'error': 'An unexpected error occurred'};
+  }
+}
+
+Future<void> deleteUser(int userId) async {
+  String url = Utils.baseUrl + "/users/$userId"; // Change the URL
+
+  final storage = new FlutterSecureStorage();
+  // Get token from secure storage
+  String? token = await storage.read(key: 'auth_token');
+
+  if (token == null) {
+    throw Exception('Token is null');
+  }
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/json",
+        "x-access-token": "$token",
+      },
+    );
+
+    print('API URL: $url');
+    print('Response Status Code: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      print('User deleted successfully.'); // Change the message
+    } else if (response.statusCode == 403) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception('Access Denied: ${errorJson['message']}');
+    } else if (response.statusCode == 404) {
+      var errorJson = jsonDecode(response.body);
+      throw Exception(
+          'User not found: ${errorJson['message']}'); // Change the message
+    } else {
+      throw Exception(
+          'Server responded with status code: ${response.statusCode}');
+    }
+  } on SocketException catch (_) {
+    throw Exception('Connection refused');
+  } catch (e) {
+    throw Exception('An unexpected error occurred: $e');
   }
 }
