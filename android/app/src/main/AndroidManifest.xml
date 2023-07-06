@@ -11,7 +11,7 @@
 
     <application
         android:label="rainroot"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/rainroot_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
