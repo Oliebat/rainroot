@@ -44,6 +44,8 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
 Future<Map<String, dynamic>> createUser(
     String firstName, String lastName, String email, String password) async {
   String url = Utils.baseUrl + "/auth/signup";
+   // Create storage
+  final storage = new FlutterSecureStorage();
   print('URL for request: $url');
   try {
     final response = await http.post(
@@ -61,9 +63,19 @@ Future<Map<String, dynamic>> createUser(
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       var convertDataToJson = jsonDecode(response.body);
       if (convertDataToJson is Map<String, dynamic>) {
+        // Store user id
+        if (convertDataToJson.containsKey('id')) {
+          var userId = convertDataToJson['id'];
+          await storage.write(
+            key: 'UserId',
+            value: userId.toString(),
+          );
+          print('Stored user ID: $userId');
+        }
+
         return convertDataToJson;
       } else {
         return {'error': 'Format de réponse invalide du serveur'};

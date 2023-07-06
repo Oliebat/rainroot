@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      title: 'rainroot',
+      title: 'RainRoot',
       initialRoute: AppRoutes.initialRoute,
       routes: AppRoutes.routes,
     );

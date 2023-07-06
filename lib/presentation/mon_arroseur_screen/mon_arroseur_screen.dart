@@ -280,9 +280,18 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: getPadding(top: 15, bottom: 88),
+                                      padding: getPadding(top: 15, bottom: 15),
                                       child: Text(
                                         '${sprinklers[0].sprinklerName}',
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.left,
+                                        style: AppStyle.txtH1Gray900,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: getPadding(top: 5, bottom: 88),
+                                      child: Text(
+                                        '${sprinklers[0].location}',
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.left,
                                         style: AppStyle.txtH1Gray900,

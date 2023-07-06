@@ -482,29 +482,36 @@ class _HomePageState extends State<HomePage> {
                                                                         TextAlign
                                                                             .left,
                                                                     style: AppStyle
-                                                                        .txtComfortaaRegular32,
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      getPadding(
-                                                                          left:
-                                                                              15),
-                                                                  child: Text(
-                                                                    "lbl_c".tr,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left,
-                                                                    style: AppStyle
-                                                                        .txtComfortaaRegular48
+                                                                        .txtComfortaaRegular32
                                                                         .copyWith(
                                                                             fontSize:
-                                                                                20),
+                                                                                10),
                                                                   ),
                                                                 ),
+                                                                Visibility(
+                                                                  visible:
+                                                                      hasSprinklers,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: getPadding(
+                                                                        left:
+                                                                            15),
+                                                                    child: Text(
+                                                                      "lbl_c"
+                                                                          .tr,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .left,
+                                                                      style: AppStyle
+                                                                          .txtComfortaaRegular48
+                                                                          .copyWith(
+                                                                              fontSize: 20),
+                                                                    ),
+                                                                  ),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
@@ -575,30 +582,37 @@ class _HomePageState extends State<HomePage> {
                                                                         TextAlign
                                                                             .left,
                                                                     style: AppStyle
-                                                                        .txtComfortaaRegular32WhiteA700,
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      getPadding(
-                                                                          left:
-                                                                              9),
-                                                                  child: Text(
-                                                                    "lbl_g_m3"
-                                                                        .tr,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left,
-                                                                    style: AppStyle
-                                                                        .txtComfortaaRegular36
+                                                                        .txtComfortaaRegular32WhiteA700
                                                                         .copyWith(
                                                                             fontSize:
-                                                                                20),
+                                                                                10),
                                                                   ),
                                                                 ),
+                                                                Visibility(
+                                                                  visible:
+                                                                      hasSprinklers,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        getPadding(
+                                                                            left:
+                                                                                9),
+                                                                    child: Text(
+                                                                      "lbl_g_m3"
+                                                                          .tr,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .left,
+                                                                      style: AppStyle
+                                                                          .txtComfortaaRegular48
+                                                                          .copyWith(
+                                                                              fontSize: 20),
+                                                                    ),
+                                                                  ),
+                                                                )
                                                               ],
                                                             ),
                                                           ),

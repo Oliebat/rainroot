@@ -167,36 +167,54 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                                   fieldsEmptyError = false;
                                 });
                                 try {
-                                  var data = await api.createUser(
-                                    firstName,
-                                    lastName,
-                                    email,
-                                    password,
-                                  );
+                                  var createUserResult = await api.createUser(
+                                      firstName, lastName, email, password);
+                                  print(
+                                      'Result from createUser: $createUserResult');
 
-                                  print('Data from createUser: $data');
+                                  if (createUserResult.containsKey('message') &&
+                                      createUserResult['message'] ==
+                                          'Inscription réussie!') {
+                                    var userLoginResult =
+                                        await api.userLogin(email, password);
+                                    print(
+                                        'Result from userLogin: $userLoginResult');
 
-                                  if (data.containsKey('accessToken')) {
-                                    await storage.write(
-                                      key: 'auth_token',
-                                      value: data['accessToken'],
-                                    );
+                                    if (userLoginResult
+                                        .containsKey('accessToken')) {
+                                      await storage.write(
+                                          key: 'auth_token',
+                                          value:
+                                              userLoginResult['accessToken']);
+                                      print(
+                                          'Stored token: ${userLoginResult['accessToken']}');
 
-                                    showSnackbar('Création du compte réussie');
-                                    NavigatorService.pushNamed(
-                                      AppRoutes.homePage,
-                                    );
-                                  } else if (data.containsKey('error')) {
-                                    showSnackbar(data[
-                                        'error']); // Show the error message from the server
-                                  } else {
-                                    showSnackbar(
-                                        'Erreur lors de la création du compte');
+                                      if (userLoginResult.containsKey('id')) {
+                                        var userId = userLoginResult['id'];
+                                        await storage.write(
+                                            key: 'UserId',
+                                            value: userId.toString());
+                                        print('Stored user ID: $userId');
+                                      } else {
+                                        print('User ID is not in the response');
+                                      }
+
+                                      showSnackbar('Connexion réussie');
+                                      NavigatorService.pushNamed(
+                                          AppRoutes.homePage);
+                                    } else if (userLoginResult
+                                        .containsKey('error')) {
+                                      showSnackbar(userLoginResult['error']);
+                                    }
+                                  } else if (createUserResult
+                                      .containsKey('error')) {
+                                    showSnackbar(createUserResult['error']);
                                   }
                                 } catch (e) {
                                   showSnackbar(
                                       'Une erreur inattendue est survenue');
-                                  print('Error during account creation: $e');
+                                  print(
+                                      'Error during account creation and login: $e');
                                 }
                               }
                             }
