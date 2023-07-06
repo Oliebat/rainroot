@@ -45,7 +45,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
     TokenUtils.setToken('');
     Navigator.pushNamedAndRemoveUntil(
       context,
-      AppRoutes.connexionScreen,
+      AppRoutes.starterScreen,
       (route) => false,
     );
   }

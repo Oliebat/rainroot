@@ -130,28 +130,28 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
     );
   }
 
-void _deleteSprinkler(int sprinklerId, BuildContext context) async {
-  try {
-    await api.deleteSprinkler(sprinklerId);
+  void _deleteSprinkler(int sprinklerId, BuildContext context) async {
+    try {
+      await api.deleteSprinkler(sprinklerId);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Arrosoir supprimé avec succès.'),
-        backgroundColor: Colors.blue,
-        duration: const Duration(seconds: 1),
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Arrosoir supprimé avec succès.'),
+          backgroundColor: Colors.blue,
+          duration: const Duration(seconds: 1),
+        ),
+      );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
-  } catch (e) {
-    print('Erreur lors de la suppression de l\'arrosoir : $e');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    } catch (e) {
+      print('Erreur lors de la suppression de l\'arrosoir : $e');
+    }
   }
-}
 
   void _updateSprinkler(
       int sprinklerId, String? sprinklerName, String? location) async {
@@ -204,6 +204,14 @@ void _deleteSprinkler(int sprinklerId, BuildContext context) async {
       print('URL de la requête update: $requestUrl');
       print('Données envoyées: $requestData');
       print('Formulaire soumis avec succès');
+
+      // Navigate back to the home page and refresh it
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
     } catch (e) {
       print('Erreur lors de la mise à jour de l\'arrosoir : $e');
     }
@@ -286,7 +294,7 @@ void _deleteSprinkler(int sprinklerId, BuildContext context) async {
                             ),
                             CustomImageView(
                               imagePath: ImageConstant.imgCasuallife3d285x250,
-                              height: getVerticalSize(285),
+                              height: getVerticalSize(310),
                               width: getHorizontalSize(250),
                               alignment: Alignment.bottomRight,
                               margin: getMargin(right: 52),
@@ -415,7 +423,7 @@ void _deleteSprinkler(int sprinklerId, BuildContext context) async {
                               padding: getPadding(
                                   left: 10, top: 8, right: 10, bottom: 8),
                               decoration:
-                                  AppDecoration.fillBluegray100.copyWith(
+                                  AppDecoration.fillBluegray300.copyWith(
                                 borderRadius: BorderRadiusStyle.roundedBorder20,
                               ),
                               child: Column(
@@ -457,7 +465,8 @@ void _deleteSprinkler(int sprinklerId, BuildContext context) async {
                                               overflow: TextOverflow.ellipsis,
                                               textAlign: TextAlign.left,
                                               style: AppStyle
-                                                  .txtComfortaaRegular36Gray900,
+                                                  .txtComfortaaRegular36Gray900
+                                                  .copyWith(fontSize: 20),
                                             ),
                                           ),
                                         ],
@@ -511,11 +520,12 @@ void _deleteSprinkler(int sprinklerId, BuildContext context) async {
                                           Padding(
                                             padding: getPadding(left: 11),
                                             child: Text(
-                                              "lbl_g_m3".tr,
+                                              "%".tr,
                                               overflow: TextOverflow.ellipsis,
                                               textAlign: TextAlign.left,
                                               style: AppStyle
-                                                  .txtComfortaaRegular32Black900,
+                                                  .txtComfortaaRegular32Black900
+                                                  .copyWith(fontSize: 20),
                                             ),
                                           ),
                                         ],

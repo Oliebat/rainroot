@@ -326,7 +326,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                     CustomButton(
                       height: getVerticalSize(39),
-                      text: "Supprimer Arrosoir".tr,
+                      text: "Supprimer compte".tr,
                       margin: getMargin(left: 49, top: 20, right: 49),
                       variant: ButtonVariant.FillRedAccent,
                       onTap: () {
