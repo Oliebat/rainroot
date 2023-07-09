@@ -329,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                                                     Text(
                                                       hasSprinklers
                                                           ? '${sprinklers[0].sprinklerName}'
-                                                          : "Pas d'arroseur associé",
+                                                          : "",
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textAlign: TextAlign.left,
@@ -474,7 +474,7 @@ class _HomePageState extends State<HomePage> {
                                                                   child: Text(
                                                                     hasSprinklers
                                                                         ? '${sprinklers[0].temperature}'
-                                                                        : "Pas d'arroseur associé",
+                                                                        : "...",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -485,7 +485,7 @@ class _HomePageState extends State<HomePage> {
                                                                         .txtComfortaaRegular32
                                                                         .copyWith(
                                                                             fontSize:
-                                                                                10),
+                                                                                20),
                                                                   ),
                                                                 ),
                                                                 Visibility(
@@ -574,7 +574,7 @@ class _HomePageState extends State<HomePage> {
                                                                   child: Text(
                                                                     hasSprinklers
                                                                         ? '${sprinklers[0].soilMoistureLevel}'
-                                                                        : "Pas d'arroseur associé",
+                                                                        : "...",
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
@@ -582,10 +582,7 @@ class _HomePageState extends State<HomePage> {
                                                                         TextAlign
                                                                             .left,
                                                                     style: AppStyle
-                                                                        .txtComfortaaRegular32WhiteA700
-                                                                        .copyWith(
-                                                                            fontSize:
-                                                                                10),
+                                                                        .txtComfortaaRegular32WhiteA700,
                                                                   ),
                                                                 ),
                                                                 Visibility(
