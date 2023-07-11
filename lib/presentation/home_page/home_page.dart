@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // If the future is not completed, show a loading indicator
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           // If the future completed with an error, display it
           return Text('Error: ${snapshot.error}');

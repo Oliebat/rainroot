@@ -10,9 +10,10 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
   try {
     final response = await http.post(
       Uri.parse(url),
-      body: {"email": email, "password": password},
+      body: jsonEncode({"email": email, "password": password}),
       headers: {
         "Accept": "application/json",
+        "Content-Type": "application/json"
       },
     );
 
@@ -25,6 +26,10 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
       }
     } else if (response.statusCode == 400 || response.statusCode == 404) {
       // Bad Request or Not Found - User not found or Invalid credentials
+      var errorJson = jsonDecode(response.body);
+      return {'error': errorJson['message']};
+    } else if (response.statusCode == 401) {
+      // Unauthorized - Invalid password
       var errorJson = jsonDecode(response.body);
       return {'error': errorJson['message']};
     } else {
@@ -44,7 +49,7 @@ Future<Map<String, dynamic>> userLogin(String email, String password) async {
 Future<Map<String, dynamic>> createUser(
     String firstName, String lastName, String email, String password) async {
   String url = Utils.baseUrl + "/auth/signup";
-   // Create storage
+  // Create storage
   final storage = new FlutterSecureStorage();
   print('URL for request: $url');
   try {

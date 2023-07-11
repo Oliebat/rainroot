@@ -226,7 +226,7 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
           AsyncSnapshot<List<Sprinkler>> sprinklerSnapshot) {
         if (sprinklerSnapshot.connectionState == ConnectionState.waiting) {
           // If the future is not completed, show a loading indicator
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         } else if (sprinklerSnapshot.hasError) {
           // If the future completed with an error, display it
           return Text('Error: ${sprinklerSnapshot.error}');
@@ -303,10 +303,10 @@ class _MonArroseurScreenState extends State<MonArroseurScreen> {
                             ),
                             CustomImageView(
                               imagePath: ImageConstant.imgCasuallife3d285x250,
-                              height: getVerticalSize(310),
-                              width: getHorizontalSize(250),
+                              height: getVerticalSize(335),
+                              width: getHorizontalSize(285),
                               alignment: Alignment.bottomRight,
-                              margin: getMargin(right: 52),
+                              margin: getMargin(right: 35),
                             ),
                           ],
                         ),
